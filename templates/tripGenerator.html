@@ -1,0 +1,37 @@
+<form class="row g-3">
+    <div class="col-md-3">
+        <label for="inputCity" class="form-label">Departure City</label>
+        <input type="text" class="form-control" id="inputCity">
+    </div>
+    <div class="col-md-3">
+        <label for="tirpTheme" class="form-label">Trip Theme</label>
+        <select class="form-select" id="tirpTheme">
+            <option selected>Choose...</option>
+            <option>Tropical</option>
+            <option>Snow</option>
+            <option>History</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+      <label for="iDate" class="form-label">Departure Date</label>
+      <input type="date" class="form-control" id="iDate">
+    </div>
+
+    <div class="col-md-3">
+        <label for="duration" class="form-label">Trip Lengths (days) </label>
+        <input type="number" min="0" class="form-control" id="duration">
+    </div>
+
+    <div class="col-12">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="gridCheck">
+        <label class="form-check-label" for="gridCheck">
+          Family Friendly
+        </label>
+      </div>
+    </div>
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Generate my trip!</button>
+    </div>
+  </form>
