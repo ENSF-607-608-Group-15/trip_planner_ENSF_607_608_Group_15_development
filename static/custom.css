@@ -20,14 +20,14 @@
     text-align: center;
   
   }
-
-  .job{
+  
+  .display{
     border: 1px solid #ccc;
     padding: 10px;
     margin: 10px;
     border-radius: 5px;
   }
-
+  
   .tripGenerator{
     margin-top: 40px;
     margin-bottom: 40px;
@@ -35,10 +35,20 @@
     padding: 15px;
     border-radius: 15px;
   }
+  
+  .form-check-label { 
+    margin-left: 5px;
+    } 
+    
+  .form-check-input { 
+    transform: scale(1.5); 
+    }
+    
   .pic {
+    text-align: center;
     margin-top: 40px;
     margin-bottom: 80px;
-    border: 1px solid #ccc;
+    border: none;
     padding: 15px;
     border-radius: 15px;
   }
@@ -60,6 +70,71 @@
     border-radius: 4px;
     cursor: pointer;
 }
+
+.form-container { 
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: space-between;
+    } 
+    
+.form-check { 
+    flex: 1 1 30%;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    margin: 10px; 
+} 
+    
+.form-check-input { 
+    margin-right: 10px;
+}
+
+.form-check-label { 
+    margin-left: 5px; 
+}
+
+.form-control { 
+    width: 100%;
+    margin-bottom: 10px; 
+} 
+
+textarea.form-control { 
+    resize: vertical;
+}
+
+.row.g-3 { 
+    display: flex; 
+    flex-wrap: wrap; } 
+    
+.col-md-3 { 
+    flex: 1 1 30%; 
+    box-sizing: border-box; 
+    padding: 10px;
+} 
+
+.btn-primary { 
+    background-color: #007009;
+    margin-top: 20px; 
+    border: none; 
+    padding: 10px 20px; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 24px; 
+    cursor: pointer; 
+    border-radius: 5px; 
+} 
+
+.col-12 { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin-top: 20px; 
+}
+
+.btn-primary:hover { 
+    background-color: #08420d;
+    }
 
 .Main {
     margin: 20px 100px 20px 100px;

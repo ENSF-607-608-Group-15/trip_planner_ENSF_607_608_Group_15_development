@@ -25,14 +25,26 @@ trips = db1.load_queries_dicts_from_db()
 
 app = Flask(__name__)
 
-home_title = 'ENSF607/608 Planning a Vacation'
+home_title = 'ENSF607/608 Vacation Planner'
 
-# 1. consider change face icon
-@app.route('/')
-def hello_world():
-  # to use database realted code, follow the instructions on line 11
-  #jobs = database().load_jobs_dicts_from_db()
-  return render_template('home.html', trips=trips, title=home_title)
+@app.route('/', methods=['GET', 'POST'])
+def generate_trip():
+    if request.method == 'POST':
+        input_city = request.form.get('inputCity')
+        departure_date = request.form.get('iDate')
+        return_date = request.form.get('rDate')
+        trip_theme = request.form.get('tripTheme')
+        trip_location = request.form.get('tripLocation')
+        trip_budget = request.form.get('tripBudget')
+        no_flying = 'noFlying' in request.form
+        disability_friendly = 'disabilityFriendly' in request.form
+        family_friendly = 'familyFriendly' in request.form
+        group_discounts = 'groupDiscount' in request.form
+        output_pdf = 'pdfOutput' in request.form
+        
+        print(input_city)
+    
+    return render_template('home.html', trips=trips, title=home_title)
 
 
 @app.route('/plan', methods=['POST'])

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>ENSF607 608 Project</title>
+    <title>ENSF 607 & 608 Project: Vacation Planner</title>
     
     <meta charset="'utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,41 +23,17 @@
       </div>
 
       <div class="Main" style="display: none;">
-        <div calss="pic">   
-          <div class="row">
-            <div class="col-md-5 offset-md-1 mb-2">
-              <img src="/static/sea.jpg" class="image1" id="banner">
-            </div>
-            <div class="col-md-5 offset-md-1 mb-2">
+        <div class="pic">   
+          <div class="row justify-content-center">
+            <div class="col-md-5 mb-2">
               <img src="/static/sea.jpg" class="image1" id="banner">
             </div>
           </div>  
         </div>
         
-
-        <div id="llm">
-          <h2>LLM Testing Area (Not working. Not OpenAI key attached)</h2>
-          <h2>Plan Your Vacation</h2>
-          <form action="/plan" method="POST">
-              <label for="country">Country:</label>
-              <input type="text" id="country" name="country" required><br>
-      
-              <label for="vacation_type">Type of Vacation:</label>
-              <select id="vacation_type" name="vacation_type" required>
-                  <option value="beach">Beach</option>
-                  <option value="skiing">Skiing</option>
-                  <option value="hiking">Hiking</option>
-                  <option value="sightseeing">Sightseeing</option>
-              </select><br>
-      
-      
-              <input type="submit" value="Plan Vacation">
-          </form>
-        </div>
-
         <div id="description">
-        <h2>About this web:</h2>
-        <p> Description of this web here</p>
+        <h2>Vacation Planner</h2>
+        <p>Please select the options that best fits your desired vacation</p>
         </div>
 
         <div class="tripGenerator">
@@ -65,7 +41,7 @@
 
         </div>
 
-        <div id="job">
+        <div id="display">
           <h2>Database Testing Area</h2>
           <h2>Open Positions</h2>
           <div>
@@ -73,7 +49,6 @@
             {% include 'tripitem.html' %}
             {% endfor %}
           </div>
-          
           
         </div>
       </div>
