@@ -58,17 +58,17 @@ def plan():
 
 @app.route('/login',methods=['get'])
 def login():
-    userName = request.args.get('username')
+    userName = request.args.get('usernameLogin')
     print (userName)
-    passHash = request.args.get('password')
+    passHash = request.args.get('passwordLogin')
     print (passHash)
     if userName is None or passHash is None:
-        return render_template('home.html', Authenticated="Invalid input") 
+        return render_template('home.html', Authenticated=False,ErrorMessageLogin="Invalid input") 
     query = f"SELECT * FROM users WHERE userName ='{userName}' and passHash='{passHash}' limit 1"
     myDb=database()
     user = myDb.query(query)
     print(user)
-    if user:
+    if user and user is None:
         
         # add user infomation  to session
         # covert user to userClass list
@@ -78,10 +78,33 @@ def login():
         # userList = [userClass(user[0][0], user[0][1], user[0][2])]
         # session['userName'] = myUser.userId
         # print(session['userName'])
-        return render_template('home.html',Authenticated=True)
+        return render_template('home.html',Authenticated=True,Registed=True)
     else:
-        return render_template('home.html', Authenticated="Invalid User Name or Password")
-    
+        return render_template('home.html', Authenticated=False,ErrorMessageLogin="Invalid User Name or Password")
+@app.route('/SignUp',methods=['get'])
+def SignUp():
+    userName = request.args.get('usernameSignUp')
+    print (userName)
+    passHash = request.args.get('passwordSignUp')
+    print (passHash)
+    if userName is None or passHash is None:
+        return render_template('home.html', Registed=False,ErrorMessageSignUp="Invalid input") 
+    insert = f"insert into users (userName,passHash) VALUES ('{userName}','{passHash}')"
+    myDb=database()
+    user = myDb.insert(insert)
+    print(user)
+    if user:
+        
+        # add user infomation  to session
+        # covert user to userClass list
+        
+        print(user)
+        # userList = [userClass(user[0][0], user[0][1], user[0][2])]
+        # session['userName'] = myUser.userId
+        # print(session['userName'])
+        return render_template('home.html',Registed=True)
+    else:
+        return render_template('home.html', Registed=False,ErrorMessageSignUp="Not Success!")
 # Test run
 print(__name__)
 if __name__ == '__main__':
