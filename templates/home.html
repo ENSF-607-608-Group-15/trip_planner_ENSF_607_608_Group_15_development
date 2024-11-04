@@ -30,12 +30,9 @@
  {% endif %}
  {% if Authenticated %}
       <div class="Main" >
-        <div calss="pic">   
-          <div class="row">
-            <div class="col-md-5 offset-md-1 mb-2">
-              <img src="/static/sea.jpg" class="image1" id="banner">
-            </div>
-            <div class="col-md-5 offset-md-1 mb-2">
+        <div class="pic">   
+          <div class="row justify-content-center">
+            <div class="col-md-5 mb-2">
               <img src="/static/sea.jpg" class="image1" id="banner">
             </div>
           </div>  
@@ -45,7 +42,25 @@
          <div id="llm">
           <h2>LLM Testing Area (Not working. Not OpenAI key attached)</h2>
           <h2>Plan Your Vacation</h2>
-          <form action="/plan" method="POST">
+          <style>
+              .spinner {
+                  display: none;
+                  width: 40px;
+                  height: 40px;
+                  border: 4px solid #f3f3f3;
+                  border-top: 4px solid #3498db;
+                  border-radius: 50%;
+                  animation: spin 1s linear infinite;
+                  margin: 20px auto;
+              }
+              
+              @keyframes spin {
+                  0% { transform: rotate(0deg); }
+                  100% { transform: rotate(360deg); }
+              }
+          </style>
+
+          <form id="vacationForm" onsubmit="submitVacationPlan(event)">
               <label for="country">Country:</label>
               <input type="text" id="country" name="country" required><br>
       
@@ -60,11 +75,13 @@
       
               <input type="submit" value="Plan Vacation">
           </form>
+          <div class="spinner" id="loadingSpinner"></div>
+          <div id="vacationResult"></div>
         </div> 
 
         <div id="description">
-        <h2>About this web:</h2>
-        <p> Description of this web here</p>
+          <h2>Vacation Planner</h2>
+          <p>Please select the options that best fits your desired vacation</p>
         </div>
 
         <div class="tripGenerator">
@@ -90,7 +107,7 @@
   </div>
   
   {% include 'footer.html' %}
-  <!-- <script src="{{ url_for('static', filename='script.js') }}"></script> -->
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 
 </html>

@@ -27,14 +27,27 @@ trips = db1.load_queries_dicts_from_db()
 
 app = Flask(__name__)
 
-home_title = 'ENSF607/608 Planning a Vacation'
+home_title = 'ENSF607/608 Vacation Planner'
 
 # 1. consider change face icon
 @app.route('/')
-def hello_world():
-  # to use database realted code, follow the instructions on line 11
-  #jobs = database().load_jobs_dicts_from_db()
-  return render_template('home.html', trips=trips, title=home_title)
+def generate_trip():
+    if request.method == 'POST':
+        input_city = request.form.get('inputCity')
+        departure_date = request.form.get('iDate')
+        return_date = request.form.get('rDate')
+        trip_theme = request.form.get('tripTheme')
+        trip_location = request.form.get('tripLocation')
+        trip_budget = request.form.get('tripBudget')
+        no_flying = 'noFlying' in request.form
+        disability_friendly = 'disabilityFriendly' in request.form
+        family_friendly = 'familyFriendly' in request.form
+        group_discounts = 'groupDiscount' in request.form
+        output_pdf = 'pdfOutput' in request.form
+        
+        print(input_city)
+    
+    return render_template('home.html', trips=trips, title=home_title)
 
 
 @app.route('/plan', methods=['POST'])
@@ -42,10 +55,8 @@ def plan():
     country = request.form['country']
     vacation_type = request.form['vacation_type']
 
-    # New ChatGPT API prompt
     prompt = f"Suggest a {vacation_type} vacation in {country}. Provide suggestions of things to do."
 
-    # Use ChatCompletion (ChatGPT API) for the new interface
     response = client.chat.completions.create(model="gpt-3.5-turbo",
     messages=[
         {"role": "system", "content": "You are a vacation planner."},
@@ -54,7 +65,8 @@ def plan():
     content = response.choices[0].message.content
     vacation_plan = content.strip() if content else "No vacation plan available."
 
-    return render_template('plan.html', vacation_plan=vacation_plan)
+    return jsonify({'vacation_plan': vacation_plan})
+
 
 @app.route('/login',methods=['get'])
 def login():
