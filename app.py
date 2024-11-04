@@ -68,7 +68,7 @@ def login():
     myDb=database()
     user = myDb.query(query)
     print(user)
-    if user and user is None:
+    if user and user.rowcount>0:
         
         # add user infomation  to session
         # covert user to userClass list
@@ -76,7 +76,7 @@ def login():
         myUser = userClass(user[0][0], user[0][1], user[0][2])
         print(myUser)
         # userList = [userClass(user[0][0], user[0][1], user[0][2])]
-        # session['userName'] = myUser.userId
+        session['userName'] = myUser.userId
         # print(session['userName'])
         return render_template('home.html',Authenticated=True,Registed=True)
     else:
