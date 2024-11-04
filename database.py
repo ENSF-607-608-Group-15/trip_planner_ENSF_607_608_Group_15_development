@@ -61,8 +61,7 @@ class database:
                 queries.append(query_dic)
             return queries
 
-#db1 = database()
+db1 = database()
 
-#queries = db1.load_queries_dicts_from_db()
-#print(queries)
-
+queries = db1.load_queries_dicts_from_db()
+print(queries)
