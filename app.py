@@ -80,6 +80,16 @@ def login():
         return render_template('home.html',Authenticated=True,Registed=True)
     else:
         return render_template('home.html', Authenticated=False,ErrorMessageLogin="Invalid User Name or Password")
+@app.route('/Guest',methods=['get'])
+def Guestlogin():
+    session['user_id'] = 0
+    session['user_name'] = "G"
+    return render_template('home.html',Authenticated=True,Registed=True)
+@app.route('/Logout',methods=['get'])
+def Logout():
+    session.clear()
+    
+    return render_template('home.html',Authenticated=False,Registed=True)
 @app.route('/SignUp',methods=['get'])
 def SignUp():
     userName = request.args.get('usernameSignUp')
