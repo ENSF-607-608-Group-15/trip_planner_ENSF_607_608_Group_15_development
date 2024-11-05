@@ -6,6 +6,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from vacationdbclass import userClass, querieClass, chatGPTresponse
+from flask_session import Session
 
 
 load_dotenv() 
@@ -26,7 +27,9 @@ trips = db1.load_queries_dicts_from_db()
 # App starts here
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = "vacationplan" 
+app.config['SESSION_TYPE'] = 'filesystem' 
+app.config['SESSION_PERMANENT']= False
 home_title = 'ENSF607/608 Planning a Vacation'
 
 # 1. consider change face icon
@@ -71,13 +74,9 @@ def login():
     if user and user.rowcount>0:
         
         # add user infomation  to session
-        # covert user to userClass list
         user=user.fetchall()
         myUser = userClass(user[0][0], user[0][1], user[0][2])
-        print(myUser)
-        # userList = [userClass(user[0][0], user[0][1], user[0][2])]
-        session['userName'] = myUser.userId
-        # print(session['userName'])
+        session['userId'] = myUser.userId
         return render_template('home.html',Authenticated=True,Registed=True)
     else:
         return render_template('home.html', Authenticated=False,ErrorMessageLogin="Invalid User Name or Password")
@@ -106,6 +105,8 @@ def SignUp():
     else:
         return render_template('home.html', Registed=False,ErrorMessageSignUp="Not Success!")
 # Test run
+
+
 print(__name__)
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=3000)
