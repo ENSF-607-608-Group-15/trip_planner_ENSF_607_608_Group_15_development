@@ -1,77 +1,70 @@
-<form class="row g-3" action="/trip_generator"  method="POST">
-
-  <div class="col-md-3">
-    <div class="form-container">
-      <div class="form-check">
+<form class="row g-3" action="/trip_generator" method="POST">
+  <div class="trip-form-container">
+    <!-- Main inputs section -->
+    <div class="input-group">
+      <div class="form-field">
         <label for="inputCity" class="form-label">Departure City</label>
         <input type="text" class="form-control" id="inputCity" name="inputCity">
       </div>
 
-      <div class="form-check">
-        <label for="dDate" class="form-label">DeSparture Date</label>
+      <div class="form-field">
+        <label for="dDate" class="form-label">Departure Date</label>
         <input type="date" class="form-control" id="dDate" name="dDate">
       </div>
       
-      <div class="form-check">
+      <div class="form-field">
         <label for="rDate" class="form-label">Return Date</label>
         <input type="date" class="form-control" id="rDate" name="rDate">
       </div>
 
-      <div class="form-check">
+      <div class="form-field">
         <label for="tripLocation" class="form-label">Desired Trip Location</label> 
         <input type="text" class="form-control" id="tripLocation" name="tripLocation" placeholder="Enter your desired trip location">
       </div>
 
-      <div class="form-check">
+      <div class="form-field">
         <label for="tripBudget" class="form-label">Trip Budget</label> 
         <input type="number" class="form-control" id="tripBudget" name="tripBudget" placeholder="Enter your trip budget">
       </div>
+    </div>
+
+    <!-- Checkboxes section -->
+    <div class="checkbox-group">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="noFlying" name="noFlying">
+        <label class="form-check-label" for="noFlying">No Flying</label>
+      </div>
       
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="noFlying" name="noFlying">
-      <label class="form-check-label" for="noFlying">
-        No Flying.
-      </label>
-    </div>
-  
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="disabilityFriendly" name="disabilityFriendly">
-      <label class="form-check-label" for="disabilityFriendly">
-        Disability Friendly
-      </label>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="disabilityFriendly" name="disabilityFriendly">
+        <label class="form-check-label" for="disabilityFriendly">Disability Friendly</label>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="familyFriendly" name="familyFriendly">
+        <label class="form-check-label" for="familyFriendly">Family Friendly</label>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="groupDiscount" name="groupDiscount">
+        <label class="form-check-label" for="groupDiscount">Suggest Group Discounts</label>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="pdfOutput" name="pdfOutput">
+        <label class="form-check-label" for="pdfOutput">Output as PDF</label>
+      </div>
     </div>
 
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="familyFriendly" name="familyFriendly">
-      <label class="form-check-label" for="familyFriendly">
-        Family Friendly
-      </label>
-    </div>
-
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="groupDiscount" name="groupDiscount">
-      <label class="form-check-label" for="groupDiscount">
-        Suggest Group Discounts
-      </label>
-    </div>
-
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="pdfOutput" name="pdfOutput">
-      <label class="form-check-label" for="pdfOutput">
-        Output as PDF
-      </label>
-    </div>
-    
-
-  </div>
-  <div class="form-check">
-    <label for="tripTheme" class="form-label">Trip Theme / Details</label> 
+    <!-- Theme textarea -->
+    <div class="theme-field">
+      <label for="tripTheme" class="form-label">Trip Theme / Details</label> 
       <textarea class="form-control" id="tripTheme" name="tripTheme" placeholder="Enter your trip theme" rows="5" maxlength="255"></textarea>
+    </div>
+
+    <!-- Submit button -->
+    <div class="submit-container">
+      <button type="submit" class="btn btn-primary">Generate my trip!</button>
+    </div>
   </div>
-</div>
-  
-  <div class="col-12">
-    <button type="submit" class="btn btn-primary">Generate my trip!</button>
-  </div>
-  
 </form>
