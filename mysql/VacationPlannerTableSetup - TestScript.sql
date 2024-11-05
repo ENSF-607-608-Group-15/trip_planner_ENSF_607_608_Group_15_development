@@ -1,4 +1,4 @@
--- use users;
+use n8ic4928wg3p4wnn;
 
 set @qId = NULL;
 
@@ -6,6 +6,8 @@ call AddUser("Poz", "awesomepassword");
 -- call AddUser("Poz", "awesomepassword"); # Should get username Invalid
 
 call AddUser("test", "testpassword");
+
+call AddUser("a", "a");
 
 SELECT * FROM users;
 
@@ -15,9 +17,14 @@ SELECT LAST_INSERT_ID() INTO @qId;
 select * from queries;
 
 select passHashMatch("Poz", "awesomepassword");
+select passHashMatch("a", "a");
 
 call AddResponse('Poz', @qId, 'I wanna go someplace nice', 'How about hawaii?');
 
 select * from chatgptresponses;
 
+select userName, CAST(AES_DECRYPT(passHash, userName) as char) as decryptedPass from users where userName = 'Poz';
 
+SELECT CONCAT('KILL ', id, ';') 
+FROM information_schema.PROCESSLIST 
+WHERE user = 'egfwe479rau7ia8z';

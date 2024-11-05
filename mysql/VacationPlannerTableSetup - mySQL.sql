@@ -4,7 +4,9 @@
 
 -- use VacationPlannerDB;
 
-drop table if exists uers;
+use n8ic4928wg3p4wnn;
+
+drop table if exists users;
 drop table if exists queries;
 drop table if exists chatgptresponses;
 
@@ -12,7 +14,7 @@ drop table if exists chatgptresponses;
 create table users (
   userId int auto_increment primary key,
   userName varchar(255) not null,
-  passHash varchar(255) not null
+  passHash blob not null
 );
 
 -- drop table if exists userqueries;
@@ -27,7 +29,7 @@ create table queries (
   beginDate date not null,
   endDate date not null,
   departureCity varchar(100) not null,
-  tripTheam varchar(255) not null,
+  tripTheam varchar(4000) not null,
   location varchar(100) not null,
   budget double not null,
   flying boolean not null,
@@ -53,18 +55,25 @@ create table chatgptresponses (
 
 
 drop FUNCTION if exists passHashMatch;
+drop procedure if exists AddQueries;
+drop procedure if exists AddResponse;
+drop procedure if exists AddUser;
+
 DELIMITER $$
 
-CREATE FUNCTION passHashMatch(p_userName VARCHAR(255), p_hash VARCHAR(255)) RETURNS BOOLEAN DETERMinISTIC
+CREATE FUNCTION passHashMatch(p_userName VARCHAR(255), p_hash VARCHAR(255)) RETURNS BOOLEAN DETERMINISTIC
 begin
 
     declare hasUserName int;
-    declare ph VARCHAR(255);
+    declare ph blob;
+    declare input_passHash blob;
+    
+    set input_passHash = AES_ENCRYPT(p_hash, p_userName);
 
-	select COUNT(*) into hasUserName from Users where userName = p_userName;
-    select passHash into ph from Users where userName = p_userName;
+	select COUNT(*) into hasUserName from users where userName = p_userName;
+    select passHash into ph from users where userName = p_userName;
 
-	IF hasUserName >= 1 AND p_hash = ph THEN 
+	IF hasUserName >= 1 AND input_passHash = ph THEN 
 		RETURN TRUE;
 	ELSE 
 		RETURN FALSE;
@@ -79,12 +88,15 @@ in p_passHash varchar(255)
 
 begin
 	declare userExists int;
+	declare input_passHash blob;
+    
+    set input_passHash = AES_ENCRYPT(p_passHash, p_userName);
 
 	select count(*) into userexists from users where username = p_username;
     
     if userExists = 0 then
 		insert into users (userName, passHash)
-		values (p_userName, p_passHash);
+		values (p_userName, input_passHash);
 	else
         select 'Username Invalid' as `Error`;
     end if;
@@ -135,7 +147,7 @@ begin
     
     select userId into unId from users where userName = p_userName;
 
-    insert into chatGPTresponses (userID, queryId, `query`, response)
+    insert into chatgptresponses (userID, queryId, `query`, response)
     values (unId, p_queryId, p_query, p_response);
     
 end$$

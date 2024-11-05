@@ -113,8 +113,6 @@ def plan():
       
       return render_template('plan.html', error=f"Error with API call: {e}")
 
-
-
 @app.route('/login', methods=['POST'])
 def login():
     userName = request.form.get('usernameLogin')
@@ -142,16 +140,18 @@ def login():
         return render_template('home.html', Authenticated=True, Registered=True)
     else:
         return render_template('home.html', title=home_title)
-@app.route('/Guest',methods=['get'])
-def Guestlogin():
+        
+@app.route('/guest',methods=['get'])
+def guest():
     session['user_id'] = 0
-    session['user_name'] = "G"
+    session['user_name'] = "Guest"
     return render_template('home.html',Authenticated=True,Registed=True)
+    
 @app.route('/Logout',methods=['get'])
 def Logout():
     session.clear()
-    
     return render_template('home.html',Authenticated=False,Registed=True)
+    
 @app.route('/SignUp',methods=['get'])
 def SignUp():
     userName = request.form.get('usernameSignUp')
