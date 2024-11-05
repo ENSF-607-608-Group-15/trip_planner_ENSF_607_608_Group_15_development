@@ -1,4 +1,4 @@
-<form class="row g-3" action="/trip_generator" method="POST">
+<form class="row g-3" id="tripForm" action="/trip_generator" method="POST">
   <div class="trip-form-container">
     <!-- Main inputs section -->
     <div class="input-group">
@@ -69,17 +69,26 @@
   </div>
 </form>
 
-{% if vacation_plan %}
-<div class="vacation-plan">
-    <h3>Your Personalized Vacation Plan</h3>
-    <div class="plan-content">
-        {{ vacation_plan | safe }}
-    </div>
-</div>
-{% endif %}
+<!-- Add this script at the bottom of the file -->
+<script>
+document.getElementById('tripForm').addEventListener('submit', function(e) {
+    // Show loading animation
+    document.getElementById('loadingAnimation').style.display = 'block';
+    
+    // Hide the form while loading
+    this.style.opacity = '0.5';
+    this.style.pointerEvents = 'none';
+});
 
-{% if error %}
-<div class="error-message">
-    {{ error }}
-</div>
-{% endif %}
+// Modified script for instant scrolling
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname === '/trip_generator') {
+        const button = document.querySelector('.displayUserQueries');
+        if (button) {
+            button.scrollIntoView({ 
+                block: 'start'
+            });
+        }
+    }
+});
+</script>

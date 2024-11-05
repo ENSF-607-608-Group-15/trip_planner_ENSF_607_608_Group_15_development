@@ -391,3 +391,13 @@ footer p {
     width: 100%;
     text-align: center;
 }
+
+#loadingAnimation {
+    margin: 20px auto;
+    text-align: center;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}

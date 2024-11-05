@@ -75,10 +75,33 @@
         <div class="tripGenerator">
           {% include 'tripGenerator.html' %}
         </div>
-		
+
+        <!-- Add this new loading section -->
+        <div id="loadingAnimation" style="display: none;" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Generating your trip...</p>
+        </div>
+
 		<form class="displayUserQueries" action="/displayUserQueries" method="POST">
 			<button>Previous Settings</button>
 		</form>
+
+		{% if vacation_plan %}
+		<div class="vacation-plan">
+			<h3>Your Personalized Vacation Plan</h3>
+			<div class="plan-content">
+				{{ vacation_plan | safe }}
+			</div>
+		</div>
+		{% endif %}
+
+		{% if error %}
+		<div class="error-message">
+			{{ error }}
+		</div>
+		{% endif %}
 
 		{% if trips %}
 		<div id="display">
