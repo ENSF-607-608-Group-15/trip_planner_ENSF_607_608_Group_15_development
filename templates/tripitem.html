@@ -1,20 +1,14 @@
-<div class="trip row">
-    <div class="col-9">
-        <h4>Trip ID: {{ trip['id'] }}</h4>
-        <div><b>User ID:</b> {{ trip['userId'] }}</div>
-        <div><b>Begin Date:</b> {{ trip['beginDate'] }}</div>
-        <div><b>End Date:</b> {{ trip['endDate'] }}</div>
-        <div><b>Departure City:</b> {{ trip['depatureCity'] }}</div>
-        <div><b>Trip Theme:</b> {{ trip['tripTheam'] }}</div>
-        <div><b>Location:</b> {{ trip['location'] }}</div>
-        <div><b>Budget:</b> ${{ trip['budget'] }}</div>
-        <div><b>Flying:</b> {{ 'Yes' if trip['flying'] else 'No' }}</div>
-        <div><b>Family Friendly:</b> {{ 'Yes' if trip['familyFriendly'] else 'No' }}</div>
-        <div><b>Disability Friendly:</b> {{ 'Yes' if trip['disabilityFriednly'] else 'No' }}</div>
-        <div><b>PDF Output:</b> {{ 'Yes' if trip['pdfOutput'] else 'No' }}</div>
-        <div><b>Group Discount:</b> {{ 'Yes' if trip['groupDiscount'] else 'No' }}</div>
-    </div>
-    <div class="col-3">
-        <a href="https://google.com" type="button" class="btn btn-outline-primary">Like (This is a link to google)</a>
-    </div>
-</div>
+<tr>
+    <td>{{ session['user_name'] }}</td>
+    <td>{{ trip['beginDate'] }}</td>
+    <td>{{ trip['endDate'] }}</td>
+    <td>{{ trip['depatureCity'] }}</td>
+    <td>{{ trip['tripTheam'] }}</td>
+    <td>{{ trip['location'] }}</td>
+    <td>${{ trip['budget'] }}</td>
+    <td>{{ 'Yes' if trip['noFlying'] else 'No' }}</td>
+    <td>{{ 'Yes' if trip['familyFriendly'] else 'No' }}</td>
+    <td>{{ 'Yes' if trip['disabilityFriednly'] else 'No' }}</td>
+    <td>{{ 'Yes' if trip['pdfOutput'] else 'No' }}</td>
+    <td>{{ 'Yes' if trip['groupDiscount'] else 'No' }}</td>
+</tr>

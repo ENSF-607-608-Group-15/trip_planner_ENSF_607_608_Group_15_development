@@ -6,6 +6,8 @@ from sqlalchemy import create_engine, text
 load_dotenv()
 
 # Create a connection to the database
+
+
 class database:
     def __init__(self):
         # Read the connection string components from the .env file
@@ -16,12 +18,12 @@ class database:
         dbname = os.getenv('DB_NAME')
 
         # Format the connection string
-        # 
+        #
         connection_string = f'mysql+pymysql://{user}:{password}@{host}:{port}/{dbname}?charset=utf8mb4'
-        
+
         # Create the engine using the connection string
         self.engine = create_engine(connection_string)
-        
+
     def query(self, query_string):
         try:
             with self.engine.connect() as connection:
@@ -57,9 +59,6 @@ class database:
         except:
             return False
 
-
-    
-        
     def add_user(self, name, password):
         with self.engine.connect() as connection:
             # Create a text object with the CALL statement
@@ -67,39 +66,38 @@ class database:
             input = {"username": name, "password": password}
             # Execute the procedure with parameters
             result = connection.execute(call_procedure, input)
-            
+
             # If the procedure returns any results, you can fetch them like this:
             # for row in result:
             #     print(row)
-            
+
             # Commit the transaction
             connection.commit()
 
-        
-    def load_queries_dicts_from_db(self):
+    def load_queries_dicts_from_db(self, user_id):
         with self.engine.connect() as connection:
-            result = connection.execute(text("SELECT * FROM queries"))
+            result = self.query(
+                f"select * from queries where userId = {user_id}")
             queries = []
             for row in result:
-                query_dic = {'id': row[0], 
-                            'userId': row[1], 
-                            'beginDate': row[2], 
-                            'endDate': row[3],
-                            'depatureCity': row[4],
-                            'tripTheam': row[5],
-                            'location': row[6],
-                            'budget': row[7],
-                            'flying': row[8],
-                            'familyFriendly': row[9],
-                            'disabilityFriednly': row[10],
-                            'pdfOutput': row[11],
-                            'groupDiscount': row[12],
-                            }
+                query_dic = {'id': row[0],
+                             'userId': row[1],
+                             'beginDate': row[2],
+                             'endDate': row[3],
+                             'depatureCity': row[4],
+                             'tripTheam': row[5],
+                             'location': row[6],
+                             'budget': row[7],
+                             'noFlying': row[8],
+                             'familyFriendly': row[9],
+                             'disabilityFriednly': row[10],
+                             'pdfOutput': row[11],
+                             'groupDiscount': row[12]
+                             }
                 queries.append(query_dic)
             return queries
 
-#db1 = database()
+# db1 = database()
 
-#queries = db1.load_queries_dicts_from_db()
-#print(queries)
-
+# queries = db1.load_queries_dicts_from_db()
+# print(queries)
