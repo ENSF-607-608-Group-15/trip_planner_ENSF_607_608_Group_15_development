@@ -82,9 +82,17 @@ def login():
         return render_template('home.html', Authenticated=True, Registered=True)
     else:
         return render_template('home.html', title=home_title)
-
-
-@app.route('/SignUp', methods=['POST'])
+@app.route('/Guest',methods=['get'])
+def Guestlogin():
+    session['user_id'] = 0
+    session['user_name'] = "G"
+    return render_template('home.html',Authenticated=True,Registed=True)
+@app.route('/Logout',methods=['get'])
+def Logout():
+    session.clear()
+    
+    return render_template('home.html',Authenticated=False,Registed=True)
+@app.route('/SignUp',methods=['get'])
 def SignUp():
     userName = request.form.get('usernameSignUp')
     print(userName)
