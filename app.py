@@ -7,6 +7,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from vacationdbclass import userClass, querieClass, chatGPTresponse
+from markupsafe import Markup
 
 
 load_dotenv()
@@ -33,6 +34,10 @@ def home():
     return render_template('home.html', title=home_title)
 
 
+
+
+
+'''
 @app.route('/plan', methods=['POST'])
 def plan():
     country = request.form['country']
@@ -53,6 +58,61 @@ def plan():
     vacation_plan = content.strip() if content else "No vacation plan available."
 
     return render_template('plan.html', vacation_plan=vacation_plan)
+'''
+
+@app.route('/plan', methods=['POST'])
+def plan():
+    print("\n\n\nIn plan Route\n\n\n")
+    # Retrieve trip details from the flask session
+    trip_details = session.get('trip_details', {})
+#-------------------------START OF LLM FORMATTING -----------------------------------------------
+    # For the yes/no preferences will need to append to end of the prompt
+    # Chained if statements are ugly but not sure about better way to do this
+    preferences = [] 
+    if trip_details['no_flying']:
+        preferences.append("no air travel")
+    if trip_details['disability_friendly']:
+        preferences.append("disability friendly accomodations")
+    if trip_details['family_friendly']:
+        preferences.append("family friendly activities")
+    if trip_details['group_discounts']:
+        preferences.append("group discount options")
+
+    # API prompt engineering
+    prompt = f"""Create a detailed travel itinerary with the following specifications:
+    Departure City: {trip_details.get('input_city')}
+    Destination: {trip_details.get('trip_location')}
+    Travel Dates: {trip_details.get('departure_date')} to {trip_details.get('return_date')}
+    Theme: {trip_details.get('trip_theme')}
+    Budget: {trip_details.get('trip_budget')}
+    Special Requirements: {', '.join(preferences)}
+
+    Please provide:
+    1. Daily itinerary breakdown
+    2. Recommended accommodations
+    3. Must-see attractions and activities
+    4. Transportation recommendations
+    5. Estimated costs for major expenses
+    6. Local tips and cultural considerations
+    """
+    
+    try:
+      response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+      messages=[
+          {"role": "system", "content": "You are an expert vacation planner who creates detailed, personalized travel itineraries."},
+          {"role": "user", "content": prompt}
+      ])
+      content = response.choices[0].message.content
+      print(f"\n\n\nCONTENT {content}\n\n\n")
+      vacation_plan = content.strip() if content else "No vacation plan available."
+      return render_template('plan.html', vacation_plan=vacation_plan)
+    
+    except Exception as e:
+      print(f"Error with API call {e}")
+      
+      return render_template('plan.html', error=f"Error with API call: {e}")
+
 
 
 @app.route('/login', methods=['POST'])
@@ -122,7 +182,7 @@ def SignUp():
 def generate_trip():
     # Collect user inputs into 'trip_details' dictionary
     trip_details = {
-        'departure_city': request.form.get('inputCity'),
+        'input_city': request.form.get('inputCity'),  # Changed key to match plan() function
         'departure_date': request.form.get('dDate'),
         'return_date': request.form.get('rDate'),
         'trip_theme': request.form.get('tripTheme'),
@@ -138,17 +198,69 @@ def generate_trip():
     # Store the trip details in the flask session
     session['trip_details'] = trip_details
 
+    # Save to database
     connection = engine.raw_connection()
-    query = f"call AddQueries({session['user_id']}, '{session['trip_details']['departure_date']}', '{session['trip_details']['return_date']}', '{session['trip_details']['departure_city']}', '{session['trip_details']['trip_theme']}', '{session['trip_details']['trip_location']}', {session['trip_details']['trip_budget']}, {int(session['trip_details']['no_flying'])}, {int(session['trip_details']['family_friendly'])}, {int(session['trip_details']['disability_friendly'])}, {int(session['trip_details']['output_pdf'])}, {int(session['trip_details']['group_discounts'])})"
+    query = f"call AddQueries({session['user_id']}, '{trip_details['departure_date']}', '{trip_details['return_date']}', '{trip_details['input_city']}', '{trip_details['trip_theme']}', '{trip_details['trip_location']}', {trip_details['trip_budget']}, {int(trip_details['no_flying'])}, {int(trip_details['family_friendly'])}, {int(trip_details['disability_friendly'])}, {int(trip_details['output_pdf'])}, {int(trip_details['group_discounts'])})"
     cursor = connection.cursor()
     cursor.execute(query)
     session['lastQueryID'] = cursor.fetchone()[0]
-    print(session['lastQueryID'])
     connection.commit()
     cursor.close()
-    print('query added')
 
-    return render_template('home.html', title=home_title, Authenticated=True, Registered=True)
+    # ChatGPT Integration
+    preferences = []
+    if trip_details['no_flying']:
+        preferences.append("no air travel")
+    if trip_details['disability_friendly']:
+        preferences.append("disability friendly accommodations")
+    if trip_details['family_friendly']:
+        preferences.append("family friendly activities")
+    if trip_details['group_discounts']:
+        preferences.append("group discount options")
+
+    prompt = f"""Create a detailed travel itinerary with the following specifications:
+    Departure City: {trip_details['input_city']}
+    Destination: {trip_details['trip_location']}
+    Travel Dates: {trip_details['departure_date']} to {trip_details['return_date']}
+    Theme: {trip_details['trip_theme']}
+    Budget: {trip_details['trip_budget']}
+    Special Requirements: {', '.join(preferences)}
+
+    Please provide:
+    1. Daily itinerary breakdown
+    2. Recommended accommodations
+    3. Must-see attractions and activities
+    4. Transportation recommendations
+    5. Estimated costs for major expenses
+    6. Local tips and cultural considerations
+    """
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are an expert vacation planner who creates detailed, personalized travel itineraries."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        content = response.choices[0].message.content
+        vacation_plan = content.strip() if content else "No vacation plan available."
+        
+        # Format the vacation plan with proper line breaks
+        formatted_plan = vacation_plan.replace('\n', '<br>')
+        
+        return render_template('home.html', 
+                             title=home_title, 
+                             Authenticated=True, 
+                             Registered=True, 
+                             vacation_plan=Markup(formatted_plan))  # Use Markup to safely render HTML
+    except Exception as e:
+        return render_template('home.html', 
+                               
+                             title=home_title, 
+                             Authenticated=True, 
+                             Registered=True, 
+                             error=f"Error with API call: {e}")
 
 
 @app.route('/displayUserQueries', methods=['POST'])
@@ -160,3 +272,9 @@ def displayUserQueries():
 print(__name__)
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=3000)
+
+@app.template_filter('nl2br')
+def nl2br_filter(text):
+    if not text:
+        return text
+    return Markup(text.replace('\n', '<br>'))

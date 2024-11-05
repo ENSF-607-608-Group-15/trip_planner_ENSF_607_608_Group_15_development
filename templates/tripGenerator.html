@@ -68,3 +68,18 @@
     </div>
   </div>
 </form>
+
+{% if vacation_plan %}
+<div class="vacation-plan">
+    <h3>Your Personalized Vacation Plan</h3>
+    <div class="plan-content">
+        {{ vacation_plan | safe }}
+    </div>
+</div>
+{% endif %}
+
+{% if error %}
+<div class="error-message">
+    {{ error }}
+</div>
+{% endif %}

@@ -4,3 +4,4 @@ sqlalchemy
 pymysql
 openai
 python-dotenv
+markupsafe
