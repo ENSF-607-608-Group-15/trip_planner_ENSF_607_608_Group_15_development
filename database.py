@@ -75,26 +75,37 @@ class database:
             connection.commit()
 
     def load_queries_dicts_from_db(self, user_id):
-        with self.engine.connect() as connection:
-            result = self.query(
-                f"select * from queries where userId = {user_id}")
-            queries = []
-            for row in result:
-                query_dic = {'id': row[0],
-                             'userId': row[1],
-                             'beginDate': row[2],
-                             'endDate': row[3],
-                             'depatureCity': row[4],
-                             'tripTheam': row[5],
-                             'location': row[6],
-                             'budget': row[7],
-                             'noFlying': row[8],
-                             'familyFriendly': row[9],
-                             'disabilityFriednly': row[10],
-                             'groupDiscount': row[11]
-                             }
-                queries.append(query_dic)
-            return queries
+        result = self.query(f"select * from queries where userId = {user_id}")
+        queries = []
+        for row in result:
+            query_dic = {'id': row[0],
+                         'userId': row[1],
+                         'beginDate': row[2],
+                         'endDate': row[3],
+                         'depatureCity': row[4],
+                         'tripTheam': row[5],
+                         'location': row[6],
+                         'budget': row[7],
+                         'noFlying': row[8],
+                         'familyFriendly': row[9],
+                         'disabilityFriednly': row[10],
+                         'groupDiscount': row[11]
+                         }
+            queries.append(query_dic)
+        return queries
+            
+    def load_response_dicts_from_db(self, user_id):
+        result = self.query(f"select * from chatgptresponses where userId = {user_id}")
+        responses = []
+        for row in result:
+            response_dic = {'id': row[0],
+                            'userId': row[1],
+                            'queryId': row[2],
+                            'prompt': row[3],
+                            'response': row[4].replace('<br>','\n'),
+                            }
+            responses.append(response_dic)
+        return responses
 
 # db1 = database()
 

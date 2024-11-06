@@ -37,24 +37,20 @@ def home():
 @app.route('/login', methods=['POST'])
 def login():
     userName = request.form.get('usernameLogin')
-    print(userName)
     passHash = request.form.get('passwordLogin')
-    print(passHash)
     if userName is None or passHash is None:
         return render_template('home.html', title=home_title)
     query = f"SELECT passHashMatch('{userName}', '{passHash}')"
     userValid = db1.query(query).scalar()
-    print(userValid)
     if userValid == 1:
         # add user infomation  to session
         # covert user to userClass list
-        query = f"SELECT * FROM users WHERE userName ='{userName}' and passHash='{passHash}' limit 1"
+        query = f"SELECT userId, userName FROM users WHERE userName ='{userName}' and passHash='{passHash}' limit 1"
         user = db1.query(query)
         user = user.fetchall()
         # myUser = userClass(user[0][0], user[0][1], user[0][2]) # TODO: This variable "myUser" is unused
         session['user_id'] = user[0][0]
         session['user_name'] = user[0][1]
-        print(session['user_id'])
         # userList = [userClass(user[0][0], user[0][1], user[0][2])]
         # session['userName'] = myUser.userId
         # print(session['userName'])
@@ -199,6 +195,11 @@ def generate_trip():
 def displayUserQueries():
     trips = db1.load_queries_dicts_from_db(session['user_id'])
     return render_template('home.html', trips=trips, title=home_title, Authenticated=True, Registered=True)
+
+@app.route('/displayUserVacationPlans', methods=['POST'])
+def displayUserVacationPlans():
+    vacations = db1.load_response_dicts_from_db(session['user_id'])
+    return render_template('home.html', vacations=vacations, title=home_title, Authenticated=True, Registered=True)
 
 @app.route('/download_pdf', methods=['GET'])
 def download_pdf():

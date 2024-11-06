@@ -255,11 +255,29 @@ textarea.form-control {
     color: #333;
 }
 
-.trip table th {
-    background-color: #f0f0f5;
+.trip table td {
+    color: #007bff;
 }
 
-.trip table td b, .trip table th {
+.vacation {
+    background-color: #f4f4f9;
+    border: 1px solid #d3d3d3;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.vacation table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.vacation table th {
+    padding: 8px;
+    border: 1px solid #d3d3d3;
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #f0f0f5;
     color: #007bff;
 }
   

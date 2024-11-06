@@ -14,32 +14,19 @@
      <div>
       <h1 class="title">Vacation Planner</h1>
       
-      <!-- <button id="toggleButton">Login</button> -->
-        {% if not Authenticated or not Registered %}
-      <!-- <div class="Login"> -->
 
-        <!-- <form action="/login" method="get" > -->
-          <!-- <input type="text" id="usernameInput" name="username" placeholder="Enter username">
-          <input type="password" id="passwordInput" name="password" placeholder="Enter password">
-          <input type="submit" value="Loginme"> -->
+    {% if not Authenticated or not Registered %}
 
-          
-        <!-- </form> -->
-
-        <!-- <p id="errorMessage" style="color: red;">{{Authenticated}}</p>  -->
-        
-
-      <!-- </div> -->
-  <div class="logFull">  	
+	<div class="logFull">  	
 		<input type="checkbox" id="chk" aria-hidden="true">
 
-      <form class="login" action="/login" method="POST">
-        <label for="chk" aria-hidden="true">Login</label>
-        <input type="text" name="usernameLogin" placeholder="User name" required="">
-        <input type="password" name="passwordLogin" placeholder="Password" required="">
-        <p id="errorMessage" style="color: red;">{{ErrorMessageLogin}}</p>
-        <button id="loginbtn" name="loginpbtn">Login</button>
-      </form>
+			<form class="login" action="/login" method="POST">
+			  <label for="chk" aria-hidden="true">Login</label>
+			  <input type="text" name="usernameLogin" placeholder="User name" required="">
+			  <input type="password" name="passwordLogin" placeholder="Password" required="">
+			  <p id="errorMessage" style="color: red;">{{ErrorMessageLogin}}</p>
+			  <button id="loginbtn" name="loginpbtn">Login</button>
+			</form>
 
 			<form class="signup" action="/SignUp" method="POST">
 				<label for="chk" aria-hidden="true">Sign up</label>
@@ -49,11 +36,10 @@
 				<button id="signupbtn" name="signupbtn">Sign up</button>
 			</form>
 
-
-
-
 	</div>
+	
  {% endif %}
+ 
  {% if Authenticated %}
     <div class="Main">
           <div class="pic">   
@@ -87,6 +73,14 @@
 		<form class="displayUserQueries" action="/displayUserQueries" method="POST">
 			<button id="prvsettings" name="prvsettings">Previous Settings</button>
 		</form>
+		
+		<form class="displayUserVacation" action="/displayUserVacationPlans" method="POST">
+			<button id="prvResponses" name="prvResponses">Previous Vacation Plans</button>
+		</form>
+		
+		<form class="Logout" action="/Logout" method="POST">
+			<button id="logoutbtn" name="logoutbtn">Logout</button>
+		</form>
 
 		{% if vacation_plan %}
 		<div class="vacation-plan">
@@ -105,9 +99,8 @@
 		{% endif %}
 
 		{% if trips %}
-		<div id="display">
-			<h2>Database Testing Area</h2>
-			<h2>Open Positions</h2>
+		<div id="displayQueries">
+			<h2>Here is a table of your previous settings:</h2>
 			<div class="trip">
 				<table>
 					<thead>
@@ -135,6 +128,28 @@
 			</div>
 		</div>
 		{% endif %}
+		
+		{% if vacations %}
+		<div id="displayVacations">
+			<h2>Here is a table of your previous vacation plans:</h2>
+			<div class="vacation">
+				<table>
+					<thead>
+						<tr>
+							<th>chatGPT Prompt</th>
+							<th>Vacation Plan</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for vacation in vacations %}
+						{% include 'vacationitem.html' %}
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		{% endif %}
+		
         </div>
       </div>
     {% endif %}
