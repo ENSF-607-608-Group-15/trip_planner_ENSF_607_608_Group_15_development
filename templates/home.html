@@ -78,11 +78,17 @@
         </div>
 
 		<form class="displayUserQueries" action="/displayUserQueries" method="POST">
-			<button id="prvsettings" name="prvsettings">Previous Settings</button>
+			<button id="prvsettings" name="prvsettings" 
+					{% if Guest %}disabled{% endif %}>
+				Previous Settings
+			</button>
 		</form>
 		
 		<form class="displayUserVacation" action="/displayUserVacationPlans" method="POST">
-			<button id="prvResponses" name="prvResponses">Previous Vacation Plans</button>
+			<button id="prvResponses" name="prvResponses" 
+					{% if Guest %}disabled{% endif %}>
+				Previous Vacation Plans
+			</button>
 		</form>
 		
 		<form class="Logout" action="/Logout" method="POST">

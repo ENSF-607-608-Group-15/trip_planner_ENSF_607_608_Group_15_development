@@ -48,8 +48,11 @@ def login():
     if userValid == 1:
         # add user infomation  to session
         # covert user to userClass list
-        query = f"SELECT userId, userName FROM users WHERE userName ='{
-            userName}' and passHash='{passHash}' limit 1"
+        query = (
+            f"SELECT userId, userName FROM users "
+            f"WHERE userName ='{userName}' "
+            f"and passHash='{passHash}' limit 1"
+        )
         user = db1.query(query)
         user = user.fetchall()
         # myUser = userClass(user[0][0], user[0][1], user[0][2]) # TODO: This variable "myUser" is unused
@@ -58,7 +61,7 @@ def login():
         # userList = [userClass(user[0][0], user[0][1], user[0][2])]
         # session['userName'] = myUser.userId
         # print(session['userName'])
-        return render_template('home.html', Authenticated=True, Registered=True)
+        return render_template('home.html', Authenticated=True, Registered=True, Guest=False)
     else:
         return render_template('home.html', title=home_title, errorMessage="Please use a valid username or password")
 
@@ -67,27 +70,14 @@ def login():
 def guest():
     session['user_id'] = 0
     session['user_name'] = "Guest"
-<<<<<<< HEAD
-    return render_template('home.html',Authenticated=True, Registered=True, Guest=True)
+    return render_template('home.html', Authenticated=True, Registered=True, Guest=True)
     
 @app.route('/Logout',methods=['POST'])
 def Logout():
     session.clear()
-    return render_template('home.html',Authenticated=False,Registered=True)
+    return render_template('home.html',Authenticated=False,Registered=True, Guest=False)
     
 @app.route('/SignUp',methods=['POST'])
-=======
-    return render_template('home.html', Authenticated=True, Registed=True)
-
-
-@app.route('/Logout', methods=['POST'])
-def Logout():
-    session.clear()
-    return render_template('home.html', Authenticated=False, Registed=True)
-
-
-@app.route('/SignUp', methods=['POST'])
->>>>>>> 62a3beda909806bf968b88d6a8868ca19644b2f8
 def SignUp():
     userName = request.form.get('usernameSignUp')
     print(userName)
@@ -143,8 +133,19 @@ def generate_trip():
 
     # Save to database
     connection = engine.raw_connection()
-    query = f"call AddQueries('{session['user_name']}', '{trip_details['departure_date']}', '{trip_details['return_date']}', '{trip_details['input_city']}', '{trip_details['trip_theme']}', '{trip_details['trip_location']}', {
-        trip_details['trip_budget']}, {int(trip_details['no_flying'])}, {int(trip_details['family_friendly'])}, {int(trip_details['disability_friendly'])}, {int(trip_details['group_discounts'])})"
+    query = (
+        f"call AddQueries('{session['user_name']}', "
+        f"'{trip_details['departure_date']}', "
+        f"'{trip_details['return_date']}', "
+        f"'{trip_details['input_city']}', "
+        f"'{trip_details['trip_theme']}', "
+        f"'{trip_details['trip_location']}', "
+        f"{trip_details['trip_budget']}, "
+        f"{int(trip_details['no_flying'])}, "
+        f"{int(trip_details['family_friendly'])}, "
+        f"{int(trip_details['disability_friendly'])}, "
+        f"{int(trip_details['group_discounts'])})"
+    )
     cursor = connection.cursor()
     cursor.execute(query)
     session['lastQueryID'] = cursor.fetchone()[0]
