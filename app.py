@@ -131,26 +131,33 @@ def generate_trip():
     # Store the trip details in the flask session
     session['trip_details'] = trip_details
 
-    # Save to database
-    connection = engine.raw_connection()
-    query = (
-        f"call AddQueries('{session['user_name']}', "
-        f"'{trip_details['departure_date']}', "
-        f"'{trip_details['return_date']}', "
-        f"'{trip_details['input_city']}', "
-        f"'{trip_details['trip_theme']}', "
-        f"'{trip_details['trip_location']}', "
-        f"{trip_details['trip_budget']}, "
-        f"{int(trip_details['no_flying'])}, "
-        f"{int(trip_details['family_friendly'])}, "
-        f"{int(trip_details['disability_friendly'])}, "
-        f"{int(trip_details['group_discounts'])})"
-    )
-    cursor = connection.cursor()
-    cursor.execute(query)
-    session['lastQueryID'] = cursor.fetchone()[0]
-    connection.commit()
-    cursor.close()
+    # Skip database storage for guest users
+    if session['user_name'] != "Guest":
+        # Save to database
+        connection = engine.raw_connection()
+        cursor = connection.cursor()
+        query = """
+            call AddQueries(
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+            )
+        """
+        params = (
+            session['user_name'],
+            trip_details['departure_date'],
+            trip_details['return_date'],
+            trip_details['input_city'],
+            trip_details['trip_theme'],
+            trip_details['trip_location'],
+            trip_details['trip_budget'],
+            int(trip_details['no_flying']),
+            int(trip_details['family_friendly']),
+            int(trip_details['disability_friendly']),
+            int(trip_details['group_discounts'])
+        )
+        cursor.execute(query, params)
+        session['lastQueryID'] = cursor.fetchone()[0]
+        connection.commit()
+        cursor.close()
 
     # ChatGPT Integration
     preferences = []
@@ -189,32 +196,31 @@ def generate_trip():
             ]
         )
         content = response.choices[0].message.content
-        session['vacation_plan'] = content.strip(
-        ) if content else "No vacation plan available."
+        session['vacation_plan'] = content.strip() if content else "No vacation plan available."
+        session['formatted_plan'] = session['vacation_plan'].replace('\n', '<br>')
 
-        # Format the vacation plan with proper line breaks
-        session['formatted_plan'] = session['vacation_plan'].replace(
-            '\n', '<br>')
-
-        # Use parameterized query instead of f-string
-        query = "call AddResponse(%s, %s, %s, %s)"
-        cursor = connection.cursor()
-        cursor.execute(
-            query, (session['user_name'], session['lastQueryID'], prompt, session['formatted_plan']))
-        connection.commit()
-        cursor.close()
-
+        # Skip response storage for guest users
+        if session['user_name'] != "Guest":
+            query = "call AddResponse(%s, %s, %s, %s)"
+            cursor = connection.cursor()
+            cursor.execute(
+                query, (session['user_name'], session['lastQueryID'], prompt, session['formatted_plan']))
+            connection.commit()
+            cursor.close()
+        guest_mode = session['user_name'] == "Guest";
         return render_template('home.html',
-                               title=home_title,
-                               Authenticated=True,
-                               Registered=True,
-                               vacation_plan=markdown.markdown(session['formatted_plan']))
+                           title=home_title,
+                           Authenticated=True,
+                           Registered=True,
+                           Guest=guest_mode,
+                           vacation_plan=markdown.markdown(session['formatted_plan']))
     except Exception as e:
         return render_template('home.html',
-                               title=home_title,
-                               Authenticated=True,
-                               Registered=True,
-                               error=f"Error with API call: {e}")
+                           title=home_title,
+                           Authenticated=True,
+                           Registered=True,
+                           Guest=guest_mode,
+                           error=f"Error with API call: {e}")
 
 
 @app.route('/displayUserQueries', methods=['POST'])
