@@ -95,7 +95,7 @@ class database:
         return queries
             
     def load_response_dicts_from_db(self, user_id):
-        result = self.query(f"select * from chatgptresponses where userId = {user_id}")
+        result = self.query(f"select * from chatgptresponses where userId = {user_id} LIMIT 1")
         responses = []
         for row in result:
             response_dic = {'id': row[0],
