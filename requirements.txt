@@ -8,3 +8,4 @@ markupsafe
 weasyprint
 cairo
 pango
+weasyprint-pdf
