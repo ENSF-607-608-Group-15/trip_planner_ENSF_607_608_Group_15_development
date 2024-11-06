@@ -202,12 +202,16 @@ def displayUserQueries():
 @app.route('/displayUserVacationPlans', methods=['POST'])
 def displayUserVacationPlans():
     vacations = db1.load_response_dicts_from_db(session['user_id'])
+
+    for vacation in vacations:  # Assuming vacation['vacation_plan'] contains the markdown text
+        vacation['response'] = markdown.markdown(vacation['response'])
+
     return render_template('home.html', vacations=vacations, title=home_title, Authenticated=True, Registered=True)
 
 @app.route('/download_pdf', methods=['GET'])
 def download_pdf():
     file_name = f"itinerary_for_{session['user_name']}.pdf"
-    html_content = render_template('vacationPlan.html', vacation_plan=Markup(session['formatted_plan']))
+    html_content = render_template('vacationPlan.html', vacation_plan=markdown.markdown(session['formatted_plan']))
     pdf_output = io.BytesIO()
     HTML(string=html_content).write_pdf(pdf_output)
     pdf_output.seek(0)
