@@ -11,7 +11,7 @@ call AddUser("a", "a");
 
 SELECT * FROM users;
 
-call AddQueries('Poz', '2024-10-30', '2024-11-5',  'Calgary', 'All You Can Eats', 'Mexico', 1000, true, false, false, false, false);
+call AddQueries('Poz', '2024-10-30', '2024-11-5',  'Calgary', 'All You Can Eats', 'Mexico', 1000, true, false, false, false);
 SELECT LAST_INSERT_ID() INTO @qId;
 
 select * from queries;
@@ -22,8 +22,6 @@ select passHashMatch("a", "a");
 call AddResponse('Poz', @qId, 'I wanna go someplace nice', 'How about hawaii?');
 
 select * from chatgptresponses;
-
-select userName, CAST(AES_DECRYPT(passHash, userName) as char) as decryptedPass from users where userName = 'Poz';
 
 SELECT CONCAT('KILL ', id, ';') 
 FROM information_schema.PROCESSLIST 
