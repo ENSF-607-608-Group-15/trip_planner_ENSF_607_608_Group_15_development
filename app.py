@@ -62,18 +62,18 @@ def login():
     else:
         return render_template('home.html', title=home_title)
         
-@app.route('/guest',methods=['get'])
+@app.route('/guest',methods=['POST'])
 def guest():
     session['user_id'] = 0
     session['user_name'] = "Guest"
     return render_template('home.html',Authenticated=True,Registed=True)
     
-@app.route('/Logout',methods=['get'])
+@app.route('/Logout',methods=['POST'])
 def Logout():
     session.clear()
     return render_template('home.html',Authenticated=False,Registed=True)
     
-@app.route('/SignUp',methods=['get'])
+@app.route('/SignUp',methods=['POST'])
 def SignUp():
     userName = request.form.get('usernameSignUp')
     print(userName)
