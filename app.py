@@ -10,6 +10,8 @@ from vacationdbclass import userClass, querieClass, chatGPTresponse
 from markupsafe import Markup
 from weasyprint import HTML
 import io
+import markdown
+
 
 load_dotenv()
 
@@ -184,7 +186,7 @@ def generate_trip():
                              title=home_title, 
                              Authenticated=True, 
                              Registered=True, 
-                             vacation_plan=Markup(session['formatted_plan']))
+                             vacation_plan=markdown.markdown(session['formatted_plan']))
     except Exception as e:
         return render_template('home.html',
                              title=home_title, 
