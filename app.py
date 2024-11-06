@@ -177,7 +177,11 @@ def generate_trip():
         # Format the vacation plan with proper line breaks
         session['formatted_plan'] = session['vacation_plan'].replace('\n', '<br>')
         
-        print(session['vacation_plan'])
+        query = f"call AddResponse('{session['user_name']}', {session['lastQueryID']}, '{prompt}', '{session['formatted_plan']}')"
+        cursor = connection.cursor()
+        cursor.execute(query)
+        connection.commit()
+        cursor.close()
         
         return render_template('home.html', 
                                 title=home_title, 
