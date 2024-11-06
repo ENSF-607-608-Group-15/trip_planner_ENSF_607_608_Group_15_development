@@ -6,6 +6,4 @@ openai
 python-dotenv
 markupsafe
 weasyprint
-cairo
-pango
-weasyprint-pdf
+cairocffi
