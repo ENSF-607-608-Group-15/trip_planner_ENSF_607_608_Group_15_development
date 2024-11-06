@@ -24,22 +24,25 @@
 	<div class="logFull">  	
 		<input type="checkbox" id="chk" aria-hidden="true">
 
-			<form class="login" action="/login" method="POST">
-			  <label for="chk" aria-hidden="true">Login</label>
-			  <input type="text" name="usernameLogin" placeholder="User name" required="">
-			  <input type="password" name="passwordLogin" placeholder="Password" required="">
-			  <p id="errorMessage" style="color: red;">{{ErrorMessageLogin}}</p>
-			  <button id="loginbtn" name="loginpbtn">Login</button>
-			</form>
+		<form class="login" action="/login" method="POST">
+			<label for="chk" aria-hidden="true">Login</label>
+			<input type="text" name="usernameLogin" placeholder="User name" required="">
+			<input type="password" name="passwordLogin" placeholder="Password" required="">
+			<p id="errorMessage" style="color: red;">{{ErrorMessageLogin}}</p>
+			<button id="loginbtn" name="loginpbtn">Login</button>
+		</form>
 
-			<form class="signup" action="/SignUp" method="POST">
-				<label for="chk" aria-hidden="true">Sign up</label>
-				<input type="text" name="usernameSignUp" placeholder="User name" required="">
-				<input type="password" name="passwordSignUp" placeholder="Password" required="">
-				<p id="errorMessage" style="color: red;">{{ErrorMessageSignUp}}</p>
-				<button id="signupbtn" name="signupbtn">Sign up</button>
-			</form>
+		<form class="guest-form" action="/guest" method="POST">
+			<button id="guestbtn" name="guestbtn" class="guest-button">Continue as Guest</button>
+		</form>
 
+		<form class="signup" action="/SignUp" method="POST">
+			<label for="chk" aria-hidden="true">Sign up</label>
+			<input type="text" name="usernameSignUp" placeholder="User name" required="">
+			<input type="password" name="passwordSignUp" placeholder="Password" required="">
+			<p id="errorMessage" style="color: red;">{{ErrorMessageSignUp}}</p>
+			<button id="signupbtn" name="signupbtn">Sign up</button>
+		</form>
 	</div>
 	
  {% endif %}

@@ -73,13 +73,13 @@
 
 .logFull{
 	width: 350px;
-	height: 500px;
+	height: 400px;
 	background: red;
 	overflow: hidden;
 	background: url("https://doc-08-2c-docs.googleusercontent.com/docs/securesc/68c90smiglihng9534mvqmq1946dmis5/fo0picsp1nhiucmc0l25s29respgpr4j/1631524275000/03522360960922298374/03522360960922298374/1Sx0jhdpEpnNIydS4rnN4kHSJtU1EyWka?e=view&authuser=0&nonce=gcrocepgbb17m&user=03522360960922298374&hash=tfhgbs86ka6divo3llbvp93mg4csvb38") no-repeat center/ cover;
 	border-radius: 10px;
 	box-shadow: 5px 20px 50px #000;
-	margin: 0 0 0 0;
+	margin: 20px 0 20px 0;
 	position: relative;
 	left: 50%;
 	transform: translateX(-50%);
@@ -90,14 +90,14 @@
 .login{
 	position: relative;
 	width:100%;
-	height: 100%;
+	height: 35%;
 }
 label{
 	color: #000000;
 	font-size: 1.5em;
 	justify-content: center;
 	display: flex;
-	margin: 50px;
+	margin: 30px;
 	font-weight: bold;
 	cursor: pointer;
 	transition: .5s ease-in-out;
@@ -135,10 +135,10 @@ button:hover{
 	background: #6d44b8;
 }
 .signup{
-	height: 460px;
+	height: 60%;
 	background: #eee;
 	border-radius: 60% / 10%;
-	transform: translateY(-180px);
+	transform: translateY(70px);
 	transition: .8s ease-in-out;
 }
 .signup label{
@@ -147,7 +147,7 @@ button:hover{
 }
 
 #chk:checked ~ .signup{
-	transform: translateY(-500px);
+	transform: translateY(-200px);
 }
 #chk:checked ~ .signup label{
 	transform: scale(1);	
@@ -473,4 +473,32 @@ footer p {
 
 #displayVacations::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+.guest-form {
+    position: relative;
+    width: 100%;
+    height: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(60px);
+}
+
+.guest-button {
+    width: 60%;
+    height: 40px;
+    background: #4a4a4a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: .2s ease-in;
+    margin: 0 auto;
+}
+
+.guest-button:hover {
+    background: #666666;
 }

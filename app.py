@@ -64,12 +64,12 @@ def login():
 def guest():
     session['user_id'] = 0
     session['user_name'] = "Guest"
-    return render_template('home.html',Authenticated=True,Registed=True)
+    return render_template('home.html',Authenticated=True, Registered=True, Guest=True)
     
 @app.route('/Logout',methods=['POST'])
 def Logout():
     session.clear()
-    return render_template('home.html',Authenticated=False,Registed=True)
+    return render_template('home.html',Authenticated=False,Registered=True)
     
 @app.route('/SignUp',methods=['POST'])
 def SignUp():
