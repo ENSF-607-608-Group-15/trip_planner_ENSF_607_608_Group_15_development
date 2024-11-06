@@ -36,18 +36,20 @@ home_title = 'ENSF607/608 Planning a Vacation'
 def home():
     return render_template('home.html', title=home_title)
 
+
 @app.route('/login', methods=['POST'])
 def login():
     userName = request.form.get('usernameLogin')
     passHash = request.form.get('passwordLogin')
     if userName is None or passHash is None:
-        return render_template('home.html', title=home_title, errorMessage = "Please put a valid username or password")
+        return render_template('home.html', title=home_title, errorMessage="Please use a valid username or password")
     query = f"SELECT passHashMatch('{userName}', '{passHash}')"
     userValid = db1.query(query).scalar()
     if userValid == 1:
         # add user infomation  to session
         # covert user to userClass list
-        query = f"SELECT userId, userName FROM users WHERE userName ='{userName}' and passHash='{passHash}' limit 1"
+        query = f"SELECT userId, userName FROM users WHERE userName ='{
+            userName}' and passHash='{passHash}' limit 1"
         user = db1.query(query)
         user = user.fetchall()
         # myUser = userClass(user[0][0], user[0][1], user[0][2]) # TODO: This variable "myUser" is unused
@@ -58,12 +60,14 @@ def login():
         # print(session['userName'])
         return render_template('home.html', Authenticated=True, Registered=True)
     else:
-        return render_template('home.html', title=home_title, errorMessage = "Please put a valid username or password")
-        
-@app.route('/guest',methods=['POST'])
+        return render_template('home.html', title=home_title, errorMessage="Please use a valid username or password")
+
+
+@app.route('/guest', methods=['POST'])
 def guest():
     session['user_id'] = 0
     session['user_name'] = "Guest"
+<<<<<<< HEAD
     return render_template('home.html',Authenticated=True, Registered=True, Guest=True)
     
 @app.route('/Logout',methods=['POST'])
@@ -72,6 +76,18 @@ def Logout():
     return render_template('home.html',Authenticated=False,Registered=True)
     
 @app.route('/SignUp',methods=['POST'])
+=======
+    return render_template('home.html', Authenticated=True, Registed=True)
+
+
+@app.route('/Logout', methods=['POST'])
+def Logout():
+    session.clear()
+    return render_template('home.html', Authenticated=False, Registed=True)
+
+
+@app.route('/SignUp', methods=['POST'])
+>>>>>>> 62a3beda909806bf968b88d6a8868ca19644b2f8
 def SignUp():
     userName = request.form.get('usernameSignUp')
     print(userName)
@@ -109,7 +125,8 @@ def SignUp():
 def generate_trip():
     # Collect user inputs into 'trip_details' dictionary
     trip_details = {
-        'input_city': request.form.get('inputCity'),  # Changed key to match plan() function
+        # Changed key to match plan() function
+        'input_city': request.form.get('inputCity'),
         'departure_date': request.form.get('dDate'),
         'return_date': request.form.get('rDate'),
         'trip_theme': request.form.get('tripTheme'),
@@ -126,7 +143,8 @@ def generate_trip():
 
     # Save to database
     connection = engine.raw_connection()
-    query = f"call AddQueries('{session['user_name']}', '{trip_details['departure_date']}', '{trip_details['return_date']}', '{trip_details['input_city']}', '{trip_details['trip_theme']}', '{trip_details['trip_location']}', {trip_details['trip_budget']}, {int(trip_details['no_flying'])}, {int(trip_details['family_friendly'])}, {int(trip_details['disability_friendly'])}, {int(trip_details['group_discounts'])})"
+    query = f"call AddQueries('{session['user_name']}', '{trip_details['departure_date']}', '{trip_details['return_date']}', '{trip_details['input_city']}', '{trip_details['trip_theme']}', '{trip_details['trip_location']}', {
+        trip_details['trip_budget']}, {int(trip_details['no_flying'])}, {int(trip_details['family_friendly'])}, {int(trip_details['disability_friendly'])}, {int(trip_details['group_discounts'])})"
     cursor = connection.cursor()
     cursor.execute(query)
     session['lastQueryID'] = cursor.fetchone()[0]
@@ -170,56 +188,66 @@ def generate_trip():
             ]
         )
         content = response.choices[0].message.content
-        session['vacation_plan'] = content.strip() if content else "No vacation plan available."
-        
+        session['vacation_plan'] = content.strip(
+        ) if content else "No vacation plan available."
+
         # Format the vacation plan with proper line breaks
-        session['formatted_plan'] = session['vacation_plan'].replace('\n', '<br>')
-        
+        session['formatted_plan'] = session['vacation_plan'].replace(
+            '\n', '<br>')
+
         # Use parameterized query instead of f-string
         query = "call AddResponse(%s, %s, %s, %s)"
         cursor = connection.cursor()
-        cursor.execute(query, (session['user_name'], session['lastQueryID'], prompt, session['formatted_plan']))
+        cursor.execute(
+            query, (session['user_name'], session['lastQueryID'], prompt, session['formatted_plan']))
         connection.commit()
         cursor.close()
-        
-        return render_template('home.html', 
-                             title=home_title, 
-                             Authenticated=True, 
-                             Registered=True, 
-                             vacation_plan=markdown.markdown(session['formatted_plan']))
+
+        return render_template('home.html',
+                               title=home_title,
+                               Authenticated=True,
+                               Registered=True,
+                               vacation_plan=markdown.markdown(session['formatted_plan']))
     except Exception as e:
         return render_template('home.html',
-                             title=home_title, 
-                             Authenticated=True, 
-                             Registered=True, 
-                             error=f"Error with API call: {e}")
+                               title=home_title,
+                               Authenticated=True,
+                               Registered=True,
+                               error=f"Error with API call: {e}")
+
 
 @app.route('/displayUserQueries', methods=['POST'])
 def displayUserQueries():
     trips = db1.load_queries_dicts_from_db(session['user_id'])
     return render_template('home.html', trips=trips, title=home_title, Authenticated=True, Registered=True)
 
+
 @app.route('/displayUserVacationPlans', methods=['POST'])
 def displayUserVacationPlans():
     vacations = db1.load_response_dicts_from_db(session['user_id'])
 
-    for vacation in vacations:  # Assuming vacation['vacation_plan'] contains the markdown text
+    # Assuming vacation['vacation_plan'] contains the markdown text
+    for vacation in vacations:
         vacation['response'] = markdown.markdown(vacation['response'])
 
     return render_template('home.html', vacations=vacations, title=home_title, Authenticated=True, Registered=True)
 
+
 @app.route('/download_pdf', methods=['GET'])
 def download_pdf():
     file_name = f"itinerary_for_{session['user_name']}.pdf"
-    html_content = render_template('vacationPlan.html', vacation_plan=markdown.markdown(session['formatted_plan']))
+    html_content = render_template(
+        'vacationPlan.html', vacation_plan=markdown.markdown(session['formatted_plan']))
     pdf_output = io.BytesIO()
     HTML(string=html_content).write_pdf(pdf_output)
     pdf_output.seek(0)
     return send_file(pdf_output, as_attachment=True, download_name=file_name, mimetype='application/pdf')
 
+
 print(__name__)
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=3000)
+
 
 @app.template_filter('nl2br')
 def nl2br_filter(text):
