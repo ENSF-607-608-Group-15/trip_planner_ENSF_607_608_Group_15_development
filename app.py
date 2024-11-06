@@ -173,23 +173,24 @@ def generate_trip():
         # Format the vacation plan with proper line breaks
         session['formatted_plan'] = session['vacation_plan'].replace('\n', '<br>')
         
-        query = f"call AddResponse('{session['user_name']}', {session['lastQueryID']}, '{prompt}', '{session['formatted_plan']}')"
+        # Use parameterized query instead of f-string
+        query = "call AddResponse(%s, %s, %s, %s)"
         cursor = connection.cursor()
-        cursor.execute(query)
+        cursor.execute(query, (session['user_name'], session['lastQueryID'], prompt, session['formatted_plan']))
         connection.commit()
         cursor.close()
         
         return render_template('home.html', 
-                                title=home_title, 
-                                Authenticated=True, 
-                                Registered=True, 
-                                vacation_plan=Markup(session['formatted_plan']))  # Use Markup to safely render HTML
+                             title=home_title, 
+                             Authenticated=True, 
+                             Registered=True, 
+                             vacation_plan=Markup(session['formatted_plan']))
     except Exception as e:
         return render_template('home.html',
-                                title=home_title, 
-                                Authenticated=True, 
-                                Registered=True, 
-                                error=f"Error with API call: {e}")
+                             title=home_title, 
+                             Authenticated=True, 
+                             Registered=True, 
+                             error=f"Error with API call: {e}")
 
 @app.route('/displayUserQueries', methods=['POST'])
 def displayUserQueries():
