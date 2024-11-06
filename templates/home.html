@@ -16,6 +16,10 @@
       
 
     {% if not Authenticated or not Registered %}
+	
+	{% if errorMessage %}
+		<p id="error-message">{{errorMessage}}</p>
+	{% endif %}
 
 	<div class="logFull">  	
 		<input type="checkbox" id="chk" aria-hidden="true">

@@ -41,7 +41,7 @@ def login():
     userName = request.form.get('usernameLogin')
     passHash = request.form.get('passwordLogin')
     if userName is None or passHash is None:
-        return render_template('home.html', title=home_title)
+        return render_template('home.html', title=home_title, errorMessage = "Please put a valid username or password")
     query = f"SELECT passHashMatch('{userName}', '{passHash}')"
     userValid = db1.query(query).scalar()
     if userValid == 1:
@@ -58,7 +58,7 @@ def login():
         # print(session['userName'])
         return render_template('home.html', Authenticated=True, Registered=True)
     else:
-        return render_template('home.html', title=home_title)
+        return render_template('home.html', title=home_title, errorMessage = "Please put a valid username or password")
         
 @app.route('/guest',methods=['POST'])
 def guest():

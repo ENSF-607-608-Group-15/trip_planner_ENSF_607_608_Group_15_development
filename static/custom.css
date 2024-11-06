@@ -16,6 +16,11 @@
     margin-top: 40px;
     
   }
+  
+#error-message {
+    color: red;
+    text-align: center;
+}
 
   #description{
     text-align: center;
