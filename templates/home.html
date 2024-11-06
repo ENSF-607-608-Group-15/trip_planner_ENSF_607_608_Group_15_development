@@ -85,12 +85,13 @@
         </div>
 
 		<form class="displayUserQueries" action="/displayUserQueries" method="POST">
-			<button>Previous Settings</button>
+			<button id="prvsettings" name="prvsettings">Previous Settings</button>
 		</form>
 
 		{% if vacation_plan %}
 		<div class="vacation-plan">
 			<h3>Your Personalized Vacation Plan</h3>
+			<a id="dwnloadpdf" name="dwnloadpdf" href="/download_pdf">Download as PDF</a>
 			<div class="plan-content">
 				{{ vacation_plan | safe }}
 			</div>

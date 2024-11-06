@@ -91,8 +91,7 @@ class database:
                              'noFlying': row[8],
                              'familyFriendly': row[9],
                              'disabilityFriednly': row[10],
-                             'pdfOutput': row[11],
-                             'groupDiscount': row[12]
+                             'groupDiscount': row[11]
                              }
                 queries.append(query_dic)
             return queries

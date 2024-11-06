@@ -5,3 +5,5 @@ pymysql
 openai
 python-dotenv
 markupsafe
+fpdf
+weasyprint
