@@ -507,3 +507,16 @@ button[disabled] {
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+.banner-container {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  overflow: hidden;
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: cover;
+}
