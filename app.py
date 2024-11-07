@@ -177,6 +177,7 @@ def generate_trip():
     Theme: {trip_details['trip_theme']}
     Budget: {trip_details['trip_budget']}
     Special Requirements: {', '.join(preferences)}
+    No more than 700 words. 
 
     Please provide:
     1. Daily itinerary breakdown
