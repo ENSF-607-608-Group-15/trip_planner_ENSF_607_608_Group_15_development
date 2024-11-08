@@ -13,20 +13,7 @@
     }
 }
 
-@keyframes breathePic {
-    0% {
-        box-shadow: 0 0 10px rgba(10, 10, 10, 0.1);
-        transform: scale(1);
-    }
-    50% {
-        box-shadow: 0 0 20px rgba(10, 10, 10, 0.3);
-        transform: scale(1.03);
-    }
-    100% {
-        box-shadow: 0 0 10px rgba(10, 10, 10, 0.1);
-        transform: scale(1);
-    }
-}
+
 
 .title{
     margin-top: 20px;
@@ -81,8 +68,7 @@
     border: 1px solid #ccc;
     padding: 0px;
     border-radius: 15px;
-	border: none;
-    animation: breathePic 3s ease-in-out infinite;
+	  border: none;
   }
 
   #llm {
