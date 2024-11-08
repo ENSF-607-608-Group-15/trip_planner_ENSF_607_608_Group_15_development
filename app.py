@@ -87,16 +87,20 @@ def SignUp():
     if not userName or not passHash or re.search(whitespace_pattern, userName) or re.search(whitespace_pattern, passHash):
         error_message = "Username and password cannot contain whitespaces."
         return render_template('home.html', title=home_title, ErrorMessageSignUp=error_message)
-
-    connection = engine.raw_connection()
-    query = f"call AddUser('{userName}', '{passHash}')"
-    cursor = connection.cursor()
-    cursor.execute(query)
-    connection.commit()
-    cursor.close()
-    print('user added')
-    return render_template('home.html', title=home_title)
-
+    
+    query = f"SELECT COUNT(*) FROM users WHERE userName='{userName}'"
+    user_count = db1.query(query)
+    if user_count == 0:
+        connection = engine.raw_connection()
+        query = f"call AddUser('{userName}', '{passHash}')"
+        cursor = connection.cursor()
+        cursor.execute(query)
+        connection.commit()
+        cursor.close()
+        return render_template('home.html', title=home_title)
+    else:
+        error_message = "Please enter a valid username and password."
+        return render_template('home.html', title=home_title, ErrorMessageSignUp=error_message)
 
 """
     if user:
