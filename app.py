@@ -13,7 +13,6 @@ from weasyprint import HTML
 import io
 import markdown
 
-
 load_dotenv()
 
 # OpenAI API key
@@ -28,44 +27,39 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "vacationplan"
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_PERMANENT'] = False
-home_title = 'ENSF607/608 Planning a Vacation'
+home_title = 'Vacation Planner'
 
 # 1. consider change face icon
-
 
 @app.route('/')
 def home():
     return render_template('home.html', title=home_title)
 
-
 @app.route('/login', methods=['POST'])
 def login():
-    userName = request.form.get('usernameLogin')
+    session['user_name'] = request.form.get('usernameLogin')
     passHash = request.form.get('passwordLogin')
-    if userName is None or passHash is None:
+    if session['user_name'] is None or passHash is None:
         return render_template('home.html', title=home_title, errorMessage="Please use a valid username or password")
-    query = f"SELECT passHashMatch('{userName}', '{passHash}')"
+    query = f"SELECT passHashMatch('{session['user_name']}', '{passHash}')"
     userValid = db1.query(query).scalar()
     if userValid == 1:
         # add user infomation  to session
         # covert user to userClass list
         query = (
-            f"SELECT userId, userName FROM users "
-            f"WHERE userName ='{userName}' "
-            f"and passHash='{passHash}' limit 1"
+            f"SELECT userId FROM users "
+            f"WHERE userName ='{session['user_name']}' limit 1"
         )
         user = db1.query(query)
         user = user.fetchall()
         # myUser = userClass(user[0][0], user[0][1], user[0][2]) # TODO: This variable "myUser" is unused
         session['user_id'] = user[0][0]
-        session['user_name'] = user[0][1]
         # userList = [userClass(user[0][0], user[0][1], user[0][2])]
         # session['userName'] = myUser.userId
         # print(session['userName'])
         return render_template('home.html', Authenticated=True, Registered=True, Guest=False)
     else:
         return render_template('home.html', title=home_title, errorMessage="Please use a valid username or password")
-
 
 @app.route('/guest', methods=['POST'])
 def guest():
