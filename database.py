@@ -100,9 +100,8 @@ class database:
         for row in result:
             response_dic = {'id': row[0],
                             'userId': row[1],
-                            'queryId': row[2],
-                            'prompt': row[3],
-                            'response': row[4].replace('<br>','\n'),
+                            'prompt': row[2],
+                            'response': row[3].replace('<br>','\n'),
                             }
             responses.append(response_dic)
         return responses

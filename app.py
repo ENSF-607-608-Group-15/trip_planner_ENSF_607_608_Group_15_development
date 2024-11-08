@@ -157,7 +157,6 @@ def generate_trip():
             int(trip_details['group_discounts'])
         )
         cursor.execute(query, params)
-        session['lastQueryID'] = cursor.fetchone()[0]
         connection.commit()
         cursor.close()
 
@@ -199,10 +198,8 @@ def generate_trip():
             ]
         )
         content = response.choices[0].message.content
-        session['vacation_plan'] = content.strip(
-        ) if content else "No vacation plan available."
-        session['formatted_plan'] = session['vacation_plan'].replace(
-            '\n', '<br>')
+        session['vacation_plan'] = content.strip() if content else "No vacation plan available."
+        session['formatted_plan'] = session['vacation_plan'].replace('\n', '<br>')
 
         # Skip response storage for guest users
         if session['user_name'] != "Guest":
@@ -214,18 +211,18 @@ def generate_trip():
             cursor.close()
         guest_mode = session['user_name'] == "Guest"
         return render_template('home.html',
-                               title=home_title,
-                               Authenticated=True,
-                               Registered=True,
-                               Guest=guest_mode,
-                               vacation_plan=markdown.markdown(session['formatted_plan']))
+                           title=home_title,
+                           Authenticated=True,
+                           Registered=True,
+                           Guest=guest_mode,
+                           vacation_plan=markdown.markdown(session['formatted_plan']))
     except Exception as e:
         return render_template('home.html',
-                               title=home_title,
-                               Authenticated=True,
-                               Registered=True,
-                               Guest=guest_mode,
-                               error=f"Error with API call: {e}")
+                           title=home_title,
+                           Authenticated=True,
+                           Registered=True,
+                           Guest=guest_mode,
+                           error=f"Error with API call: {e}")
 
 
 @app.route('/displayUserQueries', methods=['POST'])
