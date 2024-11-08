@@ -14,14 +14,8 @@ drop table if exists chatgptresponses;
 create table users (
   userId int auto_increment primary key,
   userName varchar(255) not null,
-  passHash varchar(255) not null
+  passHash blob not null
 );
-
--- drop table if exists userqueries;
--- create table userqueries (
---   queryId int primary key references queries(queryId),
---   userId int not null references users(userId)
--- );
 
 create table queries (
   queryId int auto_increment primary key,
@@ -37,12 +31,6 @@ create table queries (
   disabilityFriendly boolean not null,
   groupDiscount boolean not null
 );
-
--- drop table if exists queryResponses;
--- create table queryresponses (
---   chatGPTresponsesId int primary key references chatgptresponses(chatGPTresponsesId),
---   queryId int not null references queries(queryId)
--- );
 
 create table chatgptresponses (
   chatGPTresponsesId int auto_increment primary key,
@@ -64,12 +52,15 @@ CREATE FUNCTION passHashMatch(p_userName VARCHAR(255), p_hash VARCHAR(255)) RETU
 begin
 
     declare hasUserName int;
-    declare ph VARCHAR(255);
+    declare ph blob;
+    declare input_passHash blob;
+    
+    set input_passHash = AES_ENCRYPT(p_hash, p_userName);
 
 	select COUNT(*) into hasUserName from users where userName = p_userName;
     select passHash into ph from users where userName = p_userName;
 
-	IF hasUserName >= 1 AND p_hash = ph THEN 
+	IF hasUserName >= 1 AND input_passHash = ph THEN 
 		RETURN TRUE;
 	ELSE 
 		RETURN FALSE;
@@ -84,12 +75,15 @@ in p_passHash varchar(255)
 
 begin
 	declare userExists int;
+	declare input_passHash blob;
+    
+    set input_passHash = AES_ENCRYPT(p_passHash, p_userName);
 
 	select count(*) into userexists from users where username = p_username;
     
     if userExists = 0 then
 		insert into users (userName, passHash)
-		values (p_userName, p_passHash);
+		values (p_userName, input_passHash);
 	else
         select 'Username Invalid' as `Error`;
     end if;
