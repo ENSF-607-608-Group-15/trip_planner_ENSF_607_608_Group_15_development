@@ -89,7 +89,7 @@ def SignUp():
         return render_template('home.html', title=home_title, ErrorMessageSignUp=error_message)
     
     query = f"SELECT COUNT(*) FROM users WHERE userName='{userName}'"
-    user_count = db1.query(query)
+    user_count = db1.query(query).scalar()
     if user_count == 0:
         connection = engine.raw_connection()
         query = f"call AddUser('{userName}', '{passHash}')"
