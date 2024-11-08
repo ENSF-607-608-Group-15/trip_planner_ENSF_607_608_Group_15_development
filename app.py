@@ -1,3 +1,4 @@
+import re
 from database import database
 from flask import Flask, render_template_string, request, session, redirect, url_for
 from flask.templating import render_template
@@ -71,20 +72,27 @@ def guest():
     session['user_id'] = 0
     session['user_name'] = "Guest"
     return render_template('home.html', Authenticated=True, Registered=True, Guest=True)
-    
-@app.route('/Logout',methods=['POST'])
+
+
+@app.route('/Logout', methods=['POST'])
 def Logout():
     session.clear()
-    return render_template('home.html',Authenticated=False,Registered=True, Guest=False)
-    
-@app.route('/SignUp',methods=['POST'])
+    return render_template('home.html', Authenticated=False, Registered=True, Guest=False)
+
+
+@app.route('/SignUp', methods=['POST'])
 def SignUp():
     userName = request.form.get('usernameSignUp')
     print(userName)
     passHash = request.form.get('passwordSignUp')
     print(passHash)
-    if userName is None or passHash is None:
-        return render_template('home.html', title=home_title)
+
+    whitespace_pattern = r"\s"
+
+    if not userName or not passHash or re.search(whitespace_pattern, userName) or re.search(whitespace_pattern, passHash):
+        error_message = "Username and password cannot contain whitespaces."
+        return render_template('home.html', title=home_title, ErrorMessageSignUp=error_message)
+
     connection = engine.raw_connection()
     query = f"call AddUser('{userName}', '{passHash}')"
     cursor = connection.cursor()
@@ -177,7 +185,7 @@ def generate_trip():
     Theme: {trip_details['trip_theme']}
     Budget: {trip_details['trip_budget']}
     Special Requirements: {', '.join(preferences)}
-    No more than 700 words. 
+    No more than 700 words.
 
     Please provide:
     1. Daily itinerary breakdown
@@ -197,8 +205,10 @@ def generate_trip():
             ]
         )
         content = response.choices[0].message.content
-        session['vacation_plan'] = content.strip() if content else "No vacation plan available."
-        session['formatted_plan'] = session['vacation_plan'].replace('\n', '<br>')
+        session['vacation_plan'] = content.strip(
+        ) if content else "No vacation plan available."
+        session['formatted_plan'] = session['vacation_plan'].replace(
+            '\n', '<br>')
 
         # Skip response storage for guest users
         if session['user_name'] != "Guest":
@@ -208,20 +218,20 @@ def generate_trip():
                 query, (session['user_name'], session['lastQueryID'], prompt, session['formatted_plan']))
             connection.commit()
             cursor.close()
-        guest_mode = session['user_name'] == "Guest";
+        guest_mode = session['user_name'] == "Guest"
         return render_template('home.html',
-                           title=home_title,
-                           Authenticated=True,
-                           Registered=True,
-                           Guest=guest_mode,
-                           vacation_plan=markdown.markdown(session['formatted_plan']))
+                               title=home_title,
+                               Authenticated=True,
+                               Registered=True,
+                               Guest=guest_mode,
+                               vacation_plan=markdown.markdown(session['formatted_plan']))
     except Exception as e:
         return render_template('home.html',
-                           title=home_title,
-                           Authenticated=True,
-                           Registered=True,
-                           Guest=guest_mode,
-                           error=f"Error with API call: {e}")
+                               title=home_title,
+                               Authenticated=True,
+                               Registered=True,
+                               Guest=guest_mode,
+                               error=f"Error with API call: {e}")
 
 
 @app.route('/displayUserQueries', methods=['POST'])
