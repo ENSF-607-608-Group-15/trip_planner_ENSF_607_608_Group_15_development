@@ -14,7 +14,8 @@ drop table if exists chatgptresponses;
 create table users (
   userId int auto_increment primary key,
   userName varchar(255) not null,
-  passHash blob not null
+  passHash blob not null,
+  CHECK (CHAR_LENGTH(userName) >= 1)
 );
 
 create table queries (
@@ -35,7 +36,6 @@ create table queries (
 create table chatgptresponses (
   chatGPTresponsesId int auto_increment primary key,
   userId int not null references users(userId),
-  queryId int not null references queries(queryId),
   `query` varchar(4000) not null,
   response varchar(10000) not null
 );
@@ -45,6 +45,7 @@ drop FUNCTION if exists passHashMatch;
 drop procedure if exists AddQueries;
 drop procedure if exists AddResponse;
 drop procedure if exists AddUser;
+drop procedure if exists DeleteUser;
 
 DELIMITER $$
 
@@ -90,6 +91,23 @@ begin
 
 end$$
 
+CREATE PROCEDURE DeleteUser (
+in p_userName varchar(255)
+)
+
+begin
+	declare userExists int;
+
+	select count(*) into userexists from users where username = p_username;
+    
+    if userExists = 1 then
+		delete from users where userName = p_userName;
+	else
+        select 'User does not exist.' as `Error`;
+    end if;
+
+end$$
+
 CREATE PROCEDURE AddQueries (
 in p_userName varchar(255), 
 in p_beginDate date, 
@@ -107,22 +125,16 @@ in p_groupDiscount boolean
 begin
 
 	declare unId int;
-    declare queryid int;
     
     select userId into unId from users where userName = p_userName;
 
     insert into queries (userId, beginDate, endDate, departureCity, tripTheam, location, budget, flying, familyFriendly, disabilityFriendly, groupDiscount)
     values (unId, p_beginDate, p_endDate, p_departureCity, p_tripTheam, p_location, p_budget, p_flying, p_familyFriendly, p_disabilityFriendly, p_groupDiscount);
-    
-    set queryid = last_insert_id();
-
-    select queryid;
 
 end$$
 
 CREATE PROCEDURE AddResponse (
 in p_userName varchar(255), 
-in p_queryId int,
 in p_query varchar(4000), 
 in p_response varchar(10000)
 )
@@ -133,8 +145,8 @@ begin
     
     select userId into unId from users where userName = p_userName;
 
-    insert into chatgptresponses (userID, queryId, `query`, response)
-    values (unId, p_queryId, p_query, p_response);
+    insert into chatgptresponses (userID, `query`, response)
+    values (unId, p_query, p_response);
     
 end$$
 
