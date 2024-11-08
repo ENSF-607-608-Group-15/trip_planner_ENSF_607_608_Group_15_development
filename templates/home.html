@@ -12,10 +12,9 @@
 
   <body>
      <div>
-      <h1 class="title">Vacation Planner</h1>
-      
-
     {% if not Authenticated or not Registered %}
+	
+	<h1 class="title">Vacation Planner</h1>
 	
 	{% if errorMessage %}
 		<p id="error-message">{{errorMessage}}</p>
@@ -48,6 +47,7 @@
  {% endif %}
  
  {% if Authenticated %}
+	<h1 class="title">Tranquilo? We've got you covered.</h1>
     <div class="Main">
           <div class="pic">   
             <div class="row justify-content-center">
@@ -58,10 +58,9 @@
               </div>
             </div>  
           </div>
-        
         <div id="description">
 		  {% if session['user_name'] %}
-            <h2>Welcome to your Vacation Planner</h2>
+            <h2>Welcome to your Smart-cation Planner</h2>
 			<h2>{{ session['user_name'] }}</h2>
           {% endif %}
           <p>Please select the options that best fits your desired vacation</p>
