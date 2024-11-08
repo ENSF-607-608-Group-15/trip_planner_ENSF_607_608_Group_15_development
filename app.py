@@ -59,7 +59,8 @@ def login():
         # print(session['userName'])
         return render_template('home.html', Authenticated=True, Registered=True, Guest=False)
     else:
-        return render_template('home.html', title=home_title, errorMessage="Please use a valid username or password")
+        error_message = "Please enter a valid username and password."
+        return render_template('home.html', title=home_title, ErrorMessageLogin=error_message)
 
 @app.route('/guest', methods=['POST'])
 def guest():
