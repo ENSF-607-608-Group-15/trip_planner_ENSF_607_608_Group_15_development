@@ -53,8 +53,9 @@
   }
 
   .tripGenerator{
+    position: relative;
     margin-top: 40px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     width: auto;
     border: 1px solid #ccc;
     padding: 50px;
@@ -153,6 +154,10 @@ button{
 }
 button:hover{
 	background: #6d44b8;
+}
+
+#loginbtn{
+    margin-bottom: 10px;
 }
 .signup{
 	height: 95%;
@@ -458,20 +463,22 @@ footer p {
 }
 
 #loadingAnimation {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
+    margin: 20px auto;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+    width: fit-content;
+    min-width: 200px;
 }
 
 .spinner-border {
     width: 3rem;
     height: 3rem;
+    margin: 0 auto;
 }
 
 #displayVacations {
@@ -553,4 +560,38 @@ button[disabled] {
     height: auto;
     max-height: 500px;
     object-fit: cover;
+}
+
+.vacation-plan {
+    margin: 20px auto;
+    padding: 20px 40px;
+    background-color: #f4f4f9;
+    border: 1px solid #d3d3d3;
+    border-radius: 8px;
+    max-width: 800px;
+    width: 90%;
+}
+
+.vacation-plan h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.vacation-plan #dwnloadpdf {
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.vacation-plan #dwnloadpdf:hover {
+    text-decoration: underline;
+}
+
+.plan-content {
+    padding: 0 20px;
+    line-height: 1.6;
+    max-width: 100%;
 }

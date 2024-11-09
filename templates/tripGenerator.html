@@ -9,42 +9,12 @@
 
       <div class="form-field">
         <label for="dDate" class="form-label">Departure Date</label>
-        <div class="date-input-container">
-            <input type="text" 
-                   class="form-control" 
-                   id="dDate" 
-                   name="dDate"
-                   placeholder="DD/MM/YYYY"
-                   maxlength="10"
-                   onkeyup="formatDateInput(this)">
-            <input type="date" 
-                   id="date-picker-hidden"
-                   onchange="updateTextInput(this)"
-                   tabindex="-1">
-            <span id="date-picker-button"
-                  aria-hidden="true"
-              >📅</span>
-        </div>
+        <input type="date" class="form-control" id="dDate" name="dDate">
       </div>
       
       <div class="form-field">
         <label for="rDate" class="form-label">Return Date</label>
-        <div class="date-input-container">
-            <input type="text" 
-                   class="form-control" 
-                   id="rDate" 
-                   name="rDate"
-                   placeholder="DD/MM/YYYY"
-                   maxlength="10"
-                   onkeyup="formatDateInput(this)">
-            <input type="date" 
-                   id="date-picker-hidden"
-                   onchange="updateTextInput(this)"
-                   tabindex="-1">
-            <span id="date-picker-button"
-                  aria-hidden="true"
-              >📅</span>
-        </div>
+        <input type="date" class="form-control" id="rDate" name="rDate">
       </div>
 
       <div class="form-field">
@@ -118,154 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const dateInputs = document.querySelectorAll('.date-input');
-    
-    dateInputs.forEach(input => {
-        // Set min date to today
-        const today = new Date().toISOString().split('T')[0];
-        input.min = today;
 
-        // Add input event listener for manual entry
-        input.addEventListener('keypress', function(e) {
-            // Allow only numbers and forward slash
-            if (!/[\d/]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
-                e.preventDefault();
-            }
-            
-            // Auto-add slashes
-            if (e.key.match(/\d/)) {
-                const value = this.value.replace(/\D/g, '');
-                if (value.length === 2 || value.length === 4) {
-                    this.value = this.value + '/';
-                }
-            }
-        });
 
-        // Convert DD/MM/YYYY to YYYY-MM-DD when losing focus
-        input.addEventListener('blur', function() {
-            if (this.value && this.value.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
-                const [day, month, year] = this.value.split('/');
-                const isoDate = `${year}-${month}-${day}`;
-                if (isValidDate(isoDate)) {
-                    this.value = isoDate;
-                } else {
-                    this.value = '';
-                    alert('Please enter a valid date in DD/MM/YYYY format');
-                }
-            }
-        });
-    });
-});
-
-function isValidDate(dateString) {
-    const date = new Date(dateString);
-    return date instanceof Date && !isNaN(date);
-}
-
-function triggerDatePicker(dateInput) {
-    // Reset the date input value
-    const currentValue = dateInput.value;
-    dateInput.value = '';
-    dateInput.value = currentValue;
-    
-    // Show the picker
-    if (typeof dateInput.showPicker === 'function') {
-        dateInput.showPicker();
-    } else {
-        dateInput.focus();
-        dateInput.click();
-    }
-}
-
-function updateTextInput(dateInput) {
-    const textInput = dateInput.previousElementSibling;
-    if (dateInput.value) {
-        const [year, month, day] = dateInput.value.split('-');
-        textInput.value = `${day}/${month}/${year}`;
-    }
-}
-
-function formatDateInput(input) {
-    // Remove any non-digit characters
-    let value = input.value.replace(/\D/g, '');
-    
-    // Add slashes automatically
-    if (value.length > 0) {
-        if (value.length > 2) {
-            value = value.slice(0,2) + '/' + value.slice(2);
-        }
-        if (value.length > 5) {
-            value = value.slice(0,5) + '/' + value.slice(5);
-        }
-        if (value.length > 10) {
-            value = value.slice(0,10);
-        }
-    }
-    
-    input.value = value;
-
-    // Validate date
-    if (value.length === 10) {
-        const [day, month, year] = value.split('/');
-        const date = new Date(year, month - 1, day);
-        const isValid = date.getDate() == day && (date.getMonth() + 1) == month && date.getFullYear() == year;
-        
-        if (!isValid) {
-            input.setCustomValidity('Please enter a valid date');
-        } else {
-            input.setCustomValidity('');
-            // Update the hidden date input
-            const dateInput = input.nextElementSibling;
-            dateInput.value = `${year}-${month}-${day}`;
-        }
-    }
-}
-
-// Initialize date inputs
-document.addEventListener('DOMContentLoaded', function() {
-    const dateInputs = document.querySelectorAll('#date-picker-hidden');
-    const today = new Date().toISOString().split('T')[0];
-    
-    dateInputs.forEach(input => {
-        // Set min date to today
-        input.min = today;
-        
-        // Initialize any existing values
-        if (input.value) {
-            updateTextInput(input);
-        }
-    });
-});
 </script>
 
-<style>
-.date-input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-#date-picker-button {
-    position: absolute;
-    right: 10px;
-    font-size: 16px;
-    color: #666;
-    pointer-events: none;  /* Makes the icon non-interactive */
-}
-
-#date-picker-hidden {
-    position: absolute;
-    right: 5px;
-    opacity: 0;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    z-index: 1;  /* Ensures it's clickable */
-    color: black;
-}
-
-.form-control {
-    padding-right: 30px;
-}
-</style>
