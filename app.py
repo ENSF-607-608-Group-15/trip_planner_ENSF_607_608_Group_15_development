@@ -54,6 +54,7 @@ def login():
         user = user.fetchall()
         # myUser = userClass(user[0][0], user[0][1], user[0][2]) # TODO: This variable "myUser" is unused
         session['user_id'] = user[0][0]
+        session['guest_mode'] = False
         # userList = [userClass(user[0][0], user[0][1], user[0][2])]
         # session['userName'] = myUser.userId
         # print(session['userName'])
@@ -66,6 +67,7 @@ def login():
 def guest():
     session['user_id'] = 0
     session['user_name'] = "Guest"
+    session['guest_mode'] = True
     return render_template('home.html', Authenticated=True, Registered=True, Guest=True)
 
 
@@ -208,25 +210,21 @@ def generate_trip():
 
         # Skip response storage for guest users
         if session['user_name'] != "Guest":
-            query = "call AddResponse(%s, %s, %s, %s)"
+            query = "call AddResponse(%s, %s, %s)"
             cursor = connection.cursor()
-            cursor.execute(
-                query, (session['user_name'], session['lastQueryID'], prompt, session['formatted_plan']))
+            cursor.execute(query, (session['user_name'], prompt, session['formatted_plan']))
             connection.commit()
             cursor.close()
-        guest_mode = session['user_name'] == "Guest"
         return render_template('home.html',
                            title=home_title,
                            Authenticated=True,
                            Registered=True,
-                           Guest=guest_mode,
                            vacation_plan=markdown.markdown(session['formatted_plan']))
     except Exception as e:
         return render_template('home.html',
                            title=home_title,
                            Authenticated=True,
                            Registered=True,
-                           Guest=guest_mode,
                            error=f"Error with API call: {e}")
 
 
