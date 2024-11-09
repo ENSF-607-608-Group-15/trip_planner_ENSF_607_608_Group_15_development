@@ -80,14 +80,14 @@
 
 		<form class="displayUserQueries" action="/displayUserQueries" method="POST">
 			<button id="prvsettings" name="prvsettings" 
-					{% if Guest %}disabled{% endif %}>
+					{% if session['guest_mode'] %}disabled{% endif %}>
 				Previous Settings
 			</button>
 		</form>
 		
 		<form class="displayUserVacation" action="/displayUserVacationPlans" method="POST">
 			<button id="prvResponses" name="prvResponses" 
-					{% if Guest %}disabled{% endif %}>
+					{% if session['guest_mode'] %}disabled{% endif %}>
 				Previous Vacation Plans
 			</button>
 		</form>
@@ -129,7 +129,6 @@
 							<td>Flying</td>
 							<td>Family Friendly</td>
 							<td>Disability Friendly</td>
-							<td>PDF Output</td>
 							<td>Group Discount</td>
 						</tr>
 					</thead>
