@@ -29,8 +29,6 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_PERMANENT'] = False
 home_title = 'Vacation Planner'
 
-# 1. consider change face icon
-
 @app.route('/')
 def home():
     return render_template('home.html', title=home_title)
@@ -40,7 +38,8 @@ def login():
     session['user_name'] = request.form.get('usernameLogin')
     passHash = request.form.get('passwordLogin')
     if session['user_name'] is None or passHash is None:
-        return render_template('home.html', title=home_title, errorMessage="Please use a valid username or password")
+        error_message = "Please enter a valid username and password."
+        return render_template('home.html', title=home_title, ErrorMessageLogin=error_message)
     query = f"SELECT passHashMatch('{session['user_name']}', '{passHash}')"
     userValid = db1.query(query).scalar()
     if userValid == 1:
@@ -55,9 +54,6 @@ def login():
         # myUser = userClass(user[0][0], user[0][1], user[0][2]) # TODO: This variable "myUser" is unused
         session['user_id'] = user[0][0]
         session['guest_mode'] = False
-        # userList = [userClass(user[0][0], user[0][1], user[0][2])]
-        # session['userName'] = myUser.userId
-        # print(session['userName'])
         return render_template('home.html', Authenticated=True, Registered=True, Guest=False)
     else:
         error_message = "Please enter a valid username and password."
@@ -80,25 +76,16 @@ def Logout():
 @app.route('/SignUp', methods=['POST'])
 def SignUp():
     userName = request.form.get('usernameSignUp')
-    print(userName)
     passHash = request.form.get('passwordSignUp')
-    print(passHash)
-
     whitespace_pattern = r"\s"
-
     if not userName or not passHash or re.search(whitespace_pattern, userName) or re.search(whitespace_pattern, passHash):
         error_message = "Username and password cannot contain whitespaces."
         return render_template('home.html', title=home_title, ErrorMessageSignUp=error_message)
-    
     query = f"SELECT COUNT(*) FROM users WHERE userName='{userName}'"
     user_count = db1.query(query).scalar()
     if user_count == 0:
-        connection = engine.raw_connection()
         query = f"call AddUser('{userName}', '{passHash}')"
-        cursor = connection.cursor()
-        cursor.execute(query)
-        connection.commit()
-        cursor.close()
+        db1.callprocedure(query)
         return render_template('home.html', title=home_title)
     else:
         error_message = "Please enter a valid username and password."

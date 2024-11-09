@@ -40,6 +40,22 @@ class database:
                 return True
         except:
             return False
+            
+    def callprocedure(self, insert_string):
+        try:
+            with self.engine.connect() as connection:
+                connection.execute(text(insert_string))
+                connection.commit()
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def callprocedure_param(self, insert_string, param):
+        try:
+            with self.engine.connect() as connection:
+                connection.execute(text(insert_string), param)
+                connection.commit()
+        except Exception as e:
+            print(f"Error: {e}")
 
     def delete(self, delete_string):
         try:
