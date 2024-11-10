@@ -130,29 +130,25 @@ def generate_trip():
     # Skip database storage for guest users
     if session['user_name'] != "Guest":
         # Save to database
-        connection = engine.raw_connection()
-        cursor = connection.cursor()
         query = """
-            call AddQueries(
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-            )
-        """
-        params = (
-            session['user_name'],
-            trip_details['departure_date'],
-            trip_details['return_date'],
-            trip_details['input_city'],
-            trip_details['trip_theme'],
-            trip_details['trip_location'],
-            trip_details['trip_budget'],
-            int(trip_details['no_flying']),
-            int(trip_details['family_friendly']),
-            int(trip_details['disability_friendly']),
-            int(trip_details['group_discounts'])
-        )
-        cursor.execute(query, params)
-        connection.commit()
-        cursor.close()
+                call AddQueries(:userName, :beginDate, :endDate, :departureCity, :tripTheam, :location, 
+                                :budget, :flying, :familyFriendly, :disabilityFriendly, :groupDiscount
+                )
+                """
+        params = {
+            'userName' : session['user_name'],
+            'beginDate' : trip_details['departure_date'],
+            'endDate' : trip_details['return_date'],
+            'departureCity' : trip_details['input_city'],
+            'tripTheam' : trip_details['trip_theme'],
+            'location' : trip_details['trip_location'],
+            'budget' : float(trip_details['trip_budget']),
+            'flying' : int(trip_details['no_flying']),
+            'familyFriendly' : int(trip_details['family_friendly']),
+            'disabilityFriendly' : int(trip_details['disability_friendly']),
+            'groupDiscount' : int(trip_details['group_discounts'])
+        }
+        db1.callprocedure_param(query, params)
 
     # ChatGPT Integration
     preferences = []
@@ -197,11 +193,9 @@ def generate_trip():
 
         # Skip response storage for guest users
         if session['user_name'] != "Guest":
-            query = "call AddResponse(%s, %s, %s)"
-            cursor = connection.cursor()
-            cursor.execute(query, (session['user_name'], prompt, session['formatted_plan']))
-            connection.commit()
-            cursor.close()
+            query = "call AddResponse(:userID, :query, :response)"
+            params = {'userID' : session['user_name'], 'query' : prompt, 'response' : session['formatted_plan']}
+            db1.callprocedure_param(query, params)
         return render_template('home.html',
                            title=home_title,
                            Authenticated=True,

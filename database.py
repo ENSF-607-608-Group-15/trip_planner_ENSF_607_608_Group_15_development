@@ -44,16 +44,16 @@ class database:
     def callprocedure(self, insert_string):
         try:
             with self.engine.connect() as connection:
-                connection.execute(text(insert_string))
-                connection.commit()
+                with connection.begin() as transaction:
+                    connection.execute(text(insert_string))
         except Exception as e:
             print(f"Error: {e}")
 
-    def callprocedure_param(self, insert_string, param):
+    def callprocedure_param(self, insert_string, params):
         try:
             with self.engine.connect() as connection:
-                connection.execute(text(insert_string), param)
-                connection.commit()
+                with connection.begin() as transaction:
+                    connection.execute(text(insert_string).bindparams(**params))
         except Exception as e:
             print(f"Error: {e}")
 
