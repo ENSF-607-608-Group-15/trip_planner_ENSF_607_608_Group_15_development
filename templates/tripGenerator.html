@@ -4,7 +4,7 @@
     <div class="input-group">
       <div class="form-field">
         <label for="inputCity" class="form-label">Departure City</label>
-        <input type="text" class="form-control" id="inputCity" name="inputCity">
+        <input type="text" class="form-control" id="inputCity" name="inputCity" placeholder="Enter your departure city">
       </div>
 
       <div class="form-field">
@@ -24,7 +24,7 @@
 
       <div class="form-field">
         <label for="tripBudget" class="form-label">Trip Budget</label> 
-        <input type="number" class="form-control" id="tripBudget" name="tripBudget" placeholder="Enter your trip budget">
+        <input type="number" class="form-control" id="tripBudget" name="tripBudget" placeholder="Enter your trip budget" value="0" oninput="validatePositive(this)">
       </div>
     </div>
 
@@ -103,8 +103,19 @@ document.addEventListener("DOMContentLoaded", function() {
     rDate.min = dDate.value;
     if (rDate.value < dDate.value) {
       rDate.value = dDate.value;
+      alert('Return date cannot be earlier than departure date.');
     }
   });
 });
+
+
+
+function validatePositive(input) {
+  if (input.value < 0) {
+    input.value = '0';
+    alert('Please enter a positive value.');
+  }
+}
+
     
 </script>
