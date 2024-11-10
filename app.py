@@ -1,16 +1,13 @@
-import re
 from database import database
-from flask import Flask, render_template_string, request, session, redirect, url_for
+from flask import Flask, render_template_string, request, session, redirect, url_for, request, session, send_file
 from flask.templating import render_template
-from flask import request, session, send_file
 from flask.json import jsonify
 from openai import OpenAI
-import os
 from dotenv import load_dotenv
-from vacationdbclass import userClass, querieClass, chatGPTresponse
-from markupsafe import Markup
 from weasyprint import HTML
+import os
 import io
+import re
 import markdown
 
 load_dotenv()
@@ -20,7 +17,6 @@ client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 # Database connection
 db1 = database()
-engine = db1.engine
 
 # App starts here
 app = Flask(__name__)
@@ -43,18 +39,16 @@ def login():
     query = f"SELECT passHashMatch('{session['user_name']}', '{passHash}')"
     userValid = db1.query(query).scalar()
     if userValid == 1:
-        # add user infomation  to session
-        # covert user to userClass list
+        # add user information  to session
         query = (
             f"SELECT userId FROM users "
             f"WHERE userName ='{session['user_name']}' limit 1"
         )
         user = db1.query(query)
         user = user.fetchall()
-        # myUser = userClass(user[0][0], user[0][1], user[0][2]) # TODO: This variable "myUser" is unused
         session['user_id'] = user[0][0]
         session['guest_mode'] = False
-        return render_template('home.html', Authenticated=True, Registered=True, Guest=False)
+        return render_template('home.html', Authenticated=True, Registered=True)
     else:
         error_message = "Please enter a valid username and password."
         return render_template('home.html', title=home_title, ErrorMessageLogin=error_message)
@@ -64,13 +58,13 @@ def guest():
     session['user_id'] = 0
     session['user_name'] = "Guest"
     session['guest_mode'] = True
-    return render_template('home.html', Authenticated=True, Registered=True, Guest=True)
+    return render_template('home.html', Authenticated=True, Registered=True)
 
 
 @app.route('/Logout', methods=['POST'])
 def Logout():
     session.clear()
-    return render_template('home.html', Authenticated=False, Registered=True, Guest=False)
+    return render_template('home.html', Authenticated=False, Registered=True)
 
 
 @app.route('/SignUp', methods=['POST'])
@@ -91,41 +85,23 @@ def SignUp():
         error_message = "Please enter a valid username and password."
         return render_template('home.html', title=home_title, ErrorMessageSignUp=error_message)
 
-"""
-    if user:
-        
-        # add user infomation  to session
-        # covert user to userClass list
-        
-        print(user)
-        # userList = [userClass(user[0][0], user[0][1], user[0][2])]
-        # session['userName'] = myUser.userId
-        # print(session['userName'])
-        return render_template('home.html',Registed=True)
-    else:
-        return render_template('home.html', Registed=False,ErrorMessageSignUp="Not Success!")
-"""
-
 
 @app.route('/trip_generator', methods=['POST'])
 def generate_trip():
     # Collect user inputs into 'trip_details' dictionary
     trip_details = {
-        # Changed key to match plan() function
-        'input_city': request.form.get('inputCity'),
-        'departure_date': request.form.get('dDate'),
-        'return_date': request.form.get('rDate'),
-        'trip_theme': request.form.get('tripTheme'),
-        'trip_location': request.form.get('tripLocation'),
-        'trip_budget': request.form.get('tripBudget'),
-        'no_flying': 'noFlying' in request.form,
-        'disability_friendly': 'disabilityFriendly' in request.form,
-        'family_friendly': 'familyFriendly' in request.form,
-        'group_discounts': 'groupDiscount' in request.form,
+        'userName' : session['user_name'],
+        'beginDate': request.form.get('dDate'),
+        'endDate': request.form.get('rDate'),
+        'departureCity': request.form.get('inputCity'),
+        'location': request.form.get('tripLocation'),
+        'tripTheam': request.form.get('tripTheme'),
+        'budget': float(request.form.get('tripBudget')),
+        'flying': int('noFlying' in request.form),
+        'familyFriendly': int('familyFriendly' in request.form),
+        'disabilityFriendly': int('disabilityFriendly' in request.form),
+        'groupDiscount': int('groupDiscount' in request.form),
     }
-
-    # Store the trip details in the flask session
-    session['trip_details'] = trip_details
 
     # Skip database storage for guest users
     if session['user_name'] != "Guest":
@@ -135,38 +111,25 @@ def generate_trip():
                                 :budget, :flying, :familyFriendly, :disabilityFriendly, :groupDiscount
                 )
                 """
-        params = {
-            'userName' : session['user_name'],
-            'beginDate' : trip_details['departure_date'],
-            'endDate' : trip_details['return_date'],
-            'departureCity' : trip_details['input_city'],
-            'tripTheam' : trip_details['trip_theme'],
-            'location' : trip_details['trip_location'],
-            'budget' : float(trip_details['trip_budget']),
-            'flying' : int(trip_details['no_flying']),
-            'familyFriendly' : int(trip_details['family_friendly']),
-            'disabilityFriendly' : int(trip_details['disability_friendly']),
-            'groupDiscount' : int(trip_details['group_discounts'])
-        }
-        db1.callprocedure_param(query, params)
+        db1.callprocedure_param(query, trip_details)
 
     # ChatGPT Integration
     preferences = []
-    if trip_details['no_flying']:
+    if trip_details['flying']:
         preferences.append("no air travel")
-    if trip_details['disability_friendly']:
+    if trip_details['disabilityFriendly']:
         preferences.append("disability friendly accommodations")
-    if trip_details['family_friendly']:
+    if trip_details['familyFriendly']:
         preferences.append("family friendly activities")
-    if trip_details['group_discounts']:
+    if trip_details['groupDiscount']:
         preferences.append("group discount options")
 
     prompt = f"""Create a detailed travel itinerary with the following specifications:
-    Departure City: {trip_details['input_city']}
-    Destination: {trip_details['trip_location']}
-    Travel Dates: {trip_details['departure_date']} to {trip_details['return_date']}
-    Theme: {trip_details['trip_theme']}
-    Budget: {trip_details['trip_budget']}
+    Departure City: {trip_details['departureCity']}
+    Destination: {trip_details['location']}
+    Travel Dates: {trip_details['departureCity']} to {trip_details['endDate']}
+    Theme: {trip_details['tripTheam']}
+    Budget: {trip_details['budget']}
     Special Requirements: {', '.join(preferences)}
     No more than 700 words.
 
@@ -193,9 +156,9 @@ def generate_trip():
 
         # Skip response storage for guest users
         if session['user_name'] != "Guest":
-            query = "call AddResponse(:userID, :query, :response)"
-            params = {'userID' : session['user_name'], 'query' : prompt, 'response' : session['formatted_plan']}
-            db1.callprocedure_param(query, params)
+            query = "call AddResponse(:userName, :query, :response)"
+            param = {'userName' : session['user_name'], 'query' : prompt, 'response' : session['formatted_plan']}
+            db1.callprocedure_param(query, param)
         return render_template('home.html',
                            title=home_title,
                            Authenticated=True,
@@ -218,11 +181,6 @@ def displayUserQueries():
 @app.route('/displayUserVacationPlans', methods=['POST'])
 def displayUserVacationPlans():
     vacations = db1.load_response_dicts_from_db(session['user_id'])
-
-    # Assuming vacation['vacation_plan'] contains the markdown text
-    for vacation in vacations:
-        vacation['response'] = markdown.markdown(vacation['response'])
-
     return render_template('home.html', vacations=vacations, title=home_title, Authenticated=True, Registered=True)
 
 
@@ -240,10 +198,3 @@ def download_pdf():
 print(__name__)
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=3000)
-
-
-@app.template_filter('nl2br')
-def nl2br_filter(text):
-    if not text:
-        return text
-    return Markup(text.replace('\n', '<br>'))
