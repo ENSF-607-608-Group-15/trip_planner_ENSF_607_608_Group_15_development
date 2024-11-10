@@ -9,12 +9,12 @@
 
       <div class="form-field">
         <label for="dDate" class="form-label">Departure Date</label>
-        <input type="date" class="form-control" id="dDate" name="dDate">
+        <input type="date" class="form-control" id="dDate" name="dDate" min="">
       </div>
       
       <div class="form-field">
         <label for="rDate" class="form-label">Return Date</label>
-        <input type="date" class="form-control" id="rDate" name="rDate">
+        <input type="date" class="form-control" id="rDate" name="rDate" min="">
       </div>
 
       <div class="form-field">
@@ -67,6 +67,7 @@
 
 <!-- Add this script at the bottom of the file -->
 <script>
+
 document.getElementById('tripForm').addEventListener('submit', function(e) {
     // Show loading animation
     document.getElementById('loadingAnimation').style.display = 'block';
@@ -88,7 +89,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-
-
+document.addEventListener("DOMContentLoaded", function() {
+  const today = new Date();
+  const departureDate = new Date(today);
+  const returnDate = new Date(today);
+  departureDate.setDate(today.getDate()); 
+  returnDate.setDate(today.getDate() + 7);
+  document.getElementById('dDate').value = departureDate.toISOString().split('T')[0];
+  document.getElementById('rDate').value = returnDate.toISOString().split('T')[0];
+  document.getElementById('dDate').min = today.toISOString().split('T')[0];
+  document.getElementById('rDate').min = today.toISOString().split('T')[0];
+  dDate.addEventListener('change', function() {
+    rDate.min = dDate.value;
+    if (rDate.value < dDate.value) {
+      rDate.value = dDate.value;
+    }
+  });
+});
+    
 </script>
-
