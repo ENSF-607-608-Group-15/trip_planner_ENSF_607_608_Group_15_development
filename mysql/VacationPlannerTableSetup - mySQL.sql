@@ -97,11 +97,15 @@ in p_userName varchar(255)
 
 begin
 	declare userExists int;
+    declare unId int;
 
 	select count(*) into userexists from users where username = p_username;
+    select userId into unId from users where userName = p_userName;
     
     if userExists = 1 then
 		delete from users where userName = p_userName;
+        delete from chatgptresponses where userId = unId;
+        delete from queries where userId = unId;
 	else
         select 'User does not exist.' as `Error`;
     end if;

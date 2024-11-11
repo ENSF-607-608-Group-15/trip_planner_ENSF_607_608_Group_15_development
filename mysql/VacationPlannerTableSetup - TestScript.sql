@@ -5,6 +5,8 @@ use n8ic4928wg3p4wnn;
 # Tests adding user and error if user exists
 call AddUser("Poz", "awesomepassword");
 call AddUser("Poz", "awesomepassword"); # Should get username Invalid
+call AddQueries('Poz', '2024-10-30', '2024-11-5',  'Calgary', 'All You Can Eats', 'Mexico', 1000, true, false, false, false);
+call AddResponse('Poz', 'I wanna go someplace nice', 'How about hawaii?');
 
 # Tests deleting user, and error if tring to delete a non existing user
 call DeleteUser("Poz");
@@ -49,6 +51,12 @@ order by u.userId, q.queryId, r.chatGPTresponsesId;
 
 # Testing to ensure passwords are hashed.
 select HEX(passHash) as "Password Hash" from users;
+
+call DeleteUser("Poz");
+SELECT * FROM vacationplannerdb.users; # Poz should be missing
+SELECT * FROM vacationplannerdb.chatgptresponses; # Should be void of user Poz responses
+SELECT * FROM vacationplannerdb.queries; # Should be void of user Poz quries
+call AddUser("Poz", "awesomepassword");
 
 # Find Users with No Queries
 select u.userId, u.userName 
