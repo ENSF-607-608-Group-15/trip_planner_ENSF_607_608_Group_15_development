@@ -25,9 +25,11 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_PERMANENT'] = False
 home_title = 'Vacation Planner'
 
+
 @app.route('/')
 def home():
     return render_template('home.html', title=home_title)
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -52,6 +54,7 @@ def login():
     else:
         error_message = "Please enter a valid username and password."
         return render_template('home.html', title=home_title, ErrorMessageLogin=error_message)
+
 
 @app.route('/guest', methods=['POST'])
 def guest():
@@ -90,7 +93,7 @@ def SignUp():
 def generate_trip():
     # Collect user inputs into 'trip_details' dictionary
     trip_details = {
-        'userName' : session['user_name'],
+        'userName': session['user_name'],
         'beginDate': request.form.get('dDate'),
         'endDate': request.form.get('rDate'),
         'departureCity': request.form.get('inputCity'),
@@ -102,6 +105,16 @@ def generate_trip():
         'disabilityFriendly': int('disabilityFriendly' in request.form),
         'groupDiscount': int('groupDiscount' in request.form),
     }
+
+    # Check for any empty required fields
+    empty_details = empty_required_trip_details(trip_details)
+    if empty_details:
+        error_message = "Error generating Trip. The following fields are required: " + ", ".join(empty_details)
+        return render_template('home.html',
+                               title=home_title,
+                               Authenticated=True,
+                               Registered=True,
+                               error=error_message)
 
     # Skip database storage for guest users
     if session['user_name'] != "Guest":
@@ -170,6 +183,21 @@ def generate_trip():
                            Authenticated=True,
                            Registered=True,
                            error=f"Error with API call: {e}")
+
+
+def empty_required_trip_details(trip_details):
+    empty_details = []
+
+    if trip_details['departureCity'] == '':
+        empty_details.append('Departure City')
+    if trip_details['beginDate'] == '':
+        empty_details.append('Departure Date')
+    if trip_details['endDate'] == '':
+        empty_details.append('Return Date')   
+    if trip_details['location'] == '':
+        empty_details.append('Desired Trip Location')
+    
+    return empty_details
 
 
 @app.route('/displayUserQueries', methods=['POST'])

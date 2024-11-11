@@ -434,6 +434,13 @@ textarea.form-control {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+.error-message {
+  color: red;
+  font-weight: bold;
+  font-size: 1.2em;
+  text-align: center;
+}
+
 /* Add media queries for responsiveness */
 @media (max-width: 992px) {
   .input-group {
