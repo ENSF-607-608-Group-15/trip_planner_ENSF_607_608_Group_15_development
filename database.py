@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+import markdown
 import sqlalchemy
 from sqlalchemy import create_engine, text
 
@@ -45,7 +46,7 @@ class database:
             print(f"Error: {e}")
 
     def load_queries_dicts_from_db(self, user_id):
-        result = self.query(f"select * from queries where userId = {user_id}")
+        result = self.query(f"SELECT * FROM queries WHERE userId = {user_id} ORDER BY queryId DESC")
         queries = []
         for row in result:
             query_dic = {'id': row[0],
@@ -65,13 +66,13 @@ class database:
         return queries
             
     def load_response_dicts_from_db(self, user_id):
-        result = self.query(f"select * from chatgptresponses where userId = {user_id} LIMIT 1")
+        result = self.query(f"SELECT * FROM chatgptresponses WHERE userId = {user_id} ORDER BY chatGPTresponsesId DESC LIMIT 1")
         responses = []
         for row in result:
             response_dic = {'id': row[0],
                             'userId': row[1],
                             'prompt': row[2],
-                            'response': row[3].replace('<br>','\n'),
+                            'response': markdown.markdown(row[3].replace('<br>','\n')),
                             }
             responses.append(response_dic)
         return responses
