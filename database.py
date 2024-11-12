@@ -7,6 +7,9 @@ load_dotenv()
 
 class database:
     def __init__(self):
+        """
+        Initialize the database connection using environment variables
+        """
         # Read the connection string components from the .env file
         user = os.getenv('DB_USER')
         password = os.getenv('DB_PASSWORD')
@@ -21,6 +24,14 @@ class database:
         self.engine = create_engine(connection_string)
 
     def query(self, query_string):
+        """ Execute an SQL query
+
+        Parameters:
+        query_string (str): SQL query to execute
+
+        Returns:
+        Query result or False if execution fails.
+        """
         try:
             with self.engine.connect() as connection:
                 result = connection.execute(text(query_string))
@@ -29,6 +40,11 @@ class database:
             return False
             
     def callprocedure(self, insert_string):
+        """ Execute a stored procedure without parameters
+
+        Parameters:
+        insert_string (str): SQL command string
+        """
         try:
             with self.engine.connect() as connection:
                 with connection.begin() as transaction:
@@ -37,6 +53,12 @@ class database:
             print(f"Error: {e}")
 
     def callprocedure_param(self, insert_string, params):
+        """ Execute a stored procedure with parameters
+
+        Parameters:
+        insert_string (str): SQL command string
+        params (dict): Dictionary of parameters
+        """
         try:
             with self.engine.connect() as connection:
                 with connection.begin() as transaction:
@@ -45,6 +67,14 @@ class database:
             print(f"Error: {e}")
 
     def load_queries_dicts_from_db(self, user_id):
+        """ Load the list of queries for a user
+
+        Parameters:
+        user_id (int): ID of the user
+
+        Returns:
+        list: List of dictionaries for user queries
+        """
         result = self.query(f"select * from queries where userId = {user_id}")
         queries = []
         for row in result:
@@ -65,6 +95,14 @@ class database:
         return queries
             
     def load_response_dicts_from_db(self, user_id):
+        """ Load the list of responses for a user
+
+        Parameters:
+        user_id (int): ID of the user
+
+        Returns:
+        list: List of dictionaries for LLM responses
+        """
         result = self.query(f"select * from chatgptresponses where userId = {user_id} LIMIT 1")
         responses = []
         for row in result:
