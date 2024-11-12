@@ -28,11 +28,21 @@ home_title = 'Vacation Planner'
 
 @app.route('/')
 def home():
+    """ Render the home page
+
+    Returns:
+    Rendered HTML for the home page
+    """
     return render_template('home.html', title=home_title)
 
 
 @app.route('/login', methods=['POST'])
 def login():
+    """ Authenticate user login by verifying username and password
+
+    Returns:
+    Takes the user to home page if login is successful, or displays error message if it fails
+    """
     session['user_name'] = request.form.get('usernameLogin')
     passHash = request.form.get('passwordLogin')
     if session['user_name'] is None or passHash is None:
@@ -58,6 +68,11 @@ def login():
 
 @app.route('/guest', methods=['POST'])
 def guest():
+    """ Log in a guest user and set the session to guest mode
+
+    Returns:
+    Takes the user to the home page with guest access
+    """
     session['user_id'] = 0
     session['user_name'] = "Guest"
     session['guest_mode'] = True
@@ -66,12 +81,22 @@ def guest():
 
 @app.route('/Logout', methods=['POST'])
 def Logout():
+    """ Log out the current user
+
+    Returns:
+    Takes the user back to the login page
+    """
     session.clear()
     return render_template('home.html', Authenticated=False, Registered=True)
 
 
 @app.route('/SignUp', methods=['POST'])
 def SignUp():
+    """ Register a new user by adding their info to the database
+
+    Returns:
+    str: Take the user to the home page after successful signup
+    """
     userName = request.form.get('usernameSignUp')
     passHash = request.form.get('passwordSignUp')
     whitespace_pattern = r"\s"
@@ -91,6 +116,11 @@ def SignUp():
 
 @app.route('/trip_generator', methods=['POST'])
 def generate_trip():
+    """ Generate a vacation plan based on user input using LLM
+
+    Returns:
+    Load home page with generated vacation plan, or an error message if failure
+    """
     # Collect user inputs into 'trip_details' dictionary
     trip_details = {
         'userName': session['user_name'],
@@ -186,6 +216,14 @@ def generate_trip():
 
 
 def empty_required_trip_details(trip_details):
+    """ Check for any empty required fields in trip details and return a list of missing fields
+
+    Parameters:
+    trip_details (dict): Dictionary containing trip details
+
+    Returns:
+    list: List of strings representing the names of any required fields that are empty
+    """
     empty_details = []
 
     if trip_details['departureCity'] == '':
@@ -202,18 +240,33 @@ def empty_required_trip_details(trip_details):
 
 @app.route('/displayUserQueries', methods=['POST'])
 def displayUserQueries():
+    """ Retrieve and display users previous trip queries
+
+    Returns:
+    Load home page with a table of previous trip settings
+    """
     trips = db1.load_queries_dicts_from_db(session['user_id'])
     return render_template('home.html', trips=trips, title=home_title, Authenticated=True, Registered=True)
 
 
 @app.route('/displayUserVacationPlans', methods=['POST'])
 def displayUserVacationPlans():
+    """ Retrieve and display users previous vacation plans
+
+    Returns:
+    Load page with a table of previous vacation plans
+    """
     vacations = db1.load_response_dicts_from_db(session['user_id'])
     return render_template('home.html', vacations=vacations, title=home_title, Authenticated=True, Registered=True)
 
 
 @app.route('/download_pdf', methods=['GET'])
 def download_pdf():
+    """ Generate a PDF of the users vacation plan for downloading
+
+    Returns:
+    File: A PDF file of the vacation plan
+    """
     file_name = f"itinerary_for_{session['user_name']}.pdf"
     html_content = render_template(
         'vacationPlan.html', vacation_plan=markdown.markdown(session['formatted_plan']))
