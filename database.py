@@ -6,8 +6,12 @@ from sqlalchemy import create_engine, text
 
 load_dotenv()
 
+
 class database:
     def __init__(self):
+        """
+        Initialize the database connection using environment variables
+        """
         # Read the connection string components from the .env file
         user = os.getenv('DB_USER')
         password = os.getenv('DB_PASSWORD')
@@ -16,20 +20,34 @@ class database:
         dbname = os.getenv('DB_NAME')
 
         # Format the connection string
-        connection_string = f'mysql+pymysql://{user}:{password}@{host}:{port}/{dbname}?charset=utf8mb4'
+        connection_string = f'mysql+pymysql://{user}:{
+            password}@{host}:{port}/{dbname}?charset=utf8mb4'
 
         # Create the engine using the connection string
         self.engine = create_engine(connection_string)
 
     def query(self, query_string):
+        """ Execute an SQL query
+
+        Parameters:
+        query_string (str): SQL query to execute
+
+        Returns:
+        Query result or False if execution fails.
+        """
         try:
             with self.engine.connect() as connection:
                 result = connection.execute(text(query_string))
                 return result
         except:
             return False
-            
+
     def callprocedure(self, insert_string):
+        """ Execute a stored procedure without parameters
+
+        Parameters:
+        insert_string (str): SQL command string
+        """
         try:
             with self.engine.connect() as connection:
                 with connection.begin() as transaction:
@@ -38,15 +56,31 @@ class database:
             print(f"Error: {e}")
 
     def callprocedure_param(self, insert_string, params):
+        """ Execute a stored procedure with parameters
+
+        Parameters:
+        insert_string (str): SQL command string
+        params (dict): Dictionary of parameters
+        """
         try:
             with self.engine.connect() as connection:
                 with connection.begin() as transaction:
-                    connection.execute(text(insert_string).bindparams(**params))
+                    connection.execute(
+                        text(insert_string).bindparams(**params))
         except Exception as e:
             print(f"Error: {e}")
 
     def load_queries_dicts_from_db(self, user_id):
-        result = self.query(f"SELECT * FROM queries WHERE userId = {user_id} ORDER BY queryId DESC")
+        """ Load the list of queries for a user
+
+        Parameters:
+        user_id (int): ID of the user
+
+        Returns:
+        list: List of dictionaries for user queries
+        """
+        result = self.query(
+            f"SELECT * FROM queries WHERE userId = {user_id} ORDER BY queryId DESC")
         queries = []
         for row in result:
             query_dic = {'id': row[0],
@@ -64,15 +98,24 @@ class database:
                          }
             queries.append(query_dic)
         return queries
-            
+
     def load_response_dicts_from_db(self, user_id):
-        result = self.query(f"SELECT * FROM chatgptresponses WHERE userId = {user_id} ORDER BY chatGPTresponsesId DESC LIMIT 1")
+        """ Load the list of responses for a user
+
+        Parameters:
+        user_id (int): ID of the user
+
+        Returns:
+        list: List of dictionaries for LLM responses
+        """
+        result = self.query(f"SELECT * FROM chatgptresponses WHERE userId = {
+                            user_id} ORDER BY chatGPTresponsesId DESC LIMIT 1")
         responses = []
         for row in result:
             response_dic = {'id': row[0],
                             'userId': row[1],
                             'prompt': row[2],
-                            'response': markdown.markdown(row[3].replace('<br>','\n')),
+                            'response': markdown.markdown(row[3].replace('<br>', '\n')),
                             }
             responses.append(response_dic)
         return responses
