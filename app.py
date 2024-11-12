@@ -140,7 +140,7 @@ def generate_trip():
     prompt = f"""Create a detailed travel itinerary with the following specifications:
     Departure City: {trip_details['departureCity']}
     Destination: {trip_details['location']}
-    Travel Dates: {trip_details['departureCity']} to {trip_details['endDate']}
+    Travel Dates: {trip_details['beginDate']} to {trip_details['endDate']}
     Theme: {trip_details['tripTheam']}
     Budget: {trip_details['budget']}
     Special Requirements: {', '.join(preferences)}
