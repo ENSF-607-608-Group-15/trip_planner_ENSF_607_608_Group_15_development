@@ -4,8 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from openai import OpenAI
 import os
 
-GPT_CLIENT = OpenAI
-GPT_CLIENT.api_key = os.getenv("OPENAI_API_KEY")
+GPT_CLIENT = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 class VacationModel:
     def __init__(self, db_operations: DatabaseOperations):
