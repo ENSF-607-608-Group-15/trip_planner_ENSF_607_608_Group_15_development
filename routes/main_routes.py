@@ -1,13 +1,4 @@
-from flask import Blueprint, render_template, request, session, send_file
-from controllers.vacation_controller import VacationController
-from models.db_connection import DatabaseConnection
-from models.db_operations import DatabaseOperations
-from models.vacation_model import VacationModel
-
-db_connection = DatabaseConnection()
-db_operations = DatabaseOperations(db_connection.get_engine())
-vacation_model = VacationModel(db_operations)
-vacation_controller = VacationController(vacation_model)
+from flask import Blueprint, g, render_template, request, session, send_file
 
 main_routes = Blueprint('main_routes', __name__)
 
@@ -33,7 +24,7 @@ def login():
         return render_template('home.html', title=HOME_TITLE, ErrorMessageLogin=error_message)
 
     user_data = {"username": username, "password": password}
-    login_response = vacation_controller.login_user(user_data)
+    login_response = g.vacation_controller.login_user(user_data)
 
     if login_response.get("error"):
         return render_template('home.html', title=HOME_TITLE, ErrorMessageLogin=login_response["error"])
@@ -52,7 +43,7 @@ def guest():
     Returns:
     Takes the user to the home page with guest access
     """
-    vacation_controller.set_guest_session()
+    g.vacation_controller.set_guest_session()
     return render_template('home.html', Authenticated=True, Registered=True)
 
 
@@ -63,7 +54,7 @@ def Logout():
     Returns:
     Takes the user back to the login page
     """
-    vacation_controller.logout()
+    g.vacation_controller.logout()
     return render_template('home.html', Authenticated=False, Registered=True)
 
 
@@ -78,7 +69,7 @@ def SignUp():
         'username': request.form.get('usernameSignUp'),
         'password': request.form.get('passwordSignUp')
     }
-    sign_up = vacation_controller.sign_up_user(user_data)
+    sign_up = g.vacation_controller.sign_up_user(user_data)
     if "error" in sign_up:
         return render_template('home.html', title=HOME_TITLE, ErrorMessageSignUp=sign_up["error"])
     return render_template('home.html', title=HOME_TITLE)
@@ -105,7 +96,7 @@ def generate_trip():
         'groupDiscount': 'groupDiscount' in request.form,
     }
     
-    vacation_plan = vacation_controller.generate_trip_plan(trip_details)
+    vacation_plan = g.vacation_controller.generate_trip_plan(trip_details)
     if "error" in vacation_plan:
         return render_template('home.html', title=HOME_TITLE, Authenticated=True, Registered=True, error=vacation_plan["error"])
 
@@ -120,7 +111,7 @@ def displayUserQueries():
     Load home page with a table of previous trip settings
     """
     user_id = session.get('user_id')
-    trips = vacation_controller.get_user_queries(user_id)
+    trips = g.vacation_controller.get_user_queries(user_id)
     return render_template('home.html', trips=trips, title=HOME_TITLE, Authenticated=True, Registered=True)
 
 
@@ -132,7 +123,7 @@ def displayUserVacationPlans():
     Load page with a table of previous vacation plans
     """
     user_id = session.get('user_id')
-    vacations = vacation_controller.get_user_vacation_plans(user_id)
+    vacations = g.vacation_controller.get_user_vacation_plans(user_id)
     return render_template('home.html', vacations=vacations, title=HOME_TITLE, Authenticated=True, Registered=True)
 
 
@@ -143,7 +134,7 @@ def download_pdf():
     Returns:
     File: A PDF file of the vacation plan
     """
-    pdf_data = vacation_controller.generate_pdf()
+    pdf_data = g.vacation_controller.generate_pdf()
 
     if "error" in pdf_data:
         return render_template('home.html', error=pdf_data["error"], title="Vacation Planner")
