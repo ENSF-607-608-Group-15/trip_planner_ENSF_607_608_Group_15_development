@@ -74,12 +74,12 @@ class VacationController:
         if missing_details:
             return {"error": "Missing fields: " + ", ".join(missing_details)}
 
-        if session.get('user_name') != "Guest":
+        if session.get('user_id') != 0:
             self.vacation_model.store_trip_query(trip_details)
 
         plan = self.vacation_model.generate_trip_itinerary(trip_details)
 
-        if session.get('user_name') != "Guest":
+        if session.get('user_id') != 0:
             self.vacation_model.store_trip_response(
                 session['user_name'], session['chatGPT_prompt'], plan)
 
