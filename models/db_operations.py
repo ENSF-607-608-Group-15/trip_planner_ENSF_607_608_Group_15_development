@@ -91,7 +91,7 @@ class DatabaseOperations:
             response_dic = {'id': row[0],
                             'userId': row[1],
                             'prompt': row[2],
-                            'response': markdown.markdown(row[3].replace('<br>', '\n')),
+                            'response': markdown.markdown(row[3]),
                             }
             responses.append(response_dic)
         return responses
