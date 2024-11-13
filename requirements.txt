@@ -4,3 +4,7 @@ sqlalchemy
 pymysql
 openai
 python-dotenv
+markupsafe
+weasyprint
+cairocffi
+markdown

@@ -1,1 +1,1 @@
-A ENSF 607 & 608 project to build a vacation planning web app driven by chatGPT.
+A practice project of building a jop posting website using python and mysql

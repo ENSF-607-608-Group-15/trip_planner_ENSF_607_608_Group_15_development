@@ -1,2 +1,25 @@
+# ignore virtual enviroment
+.venv
+venv/ 
+*.pyc
+
+# ignore enviroment variables
 .env
 env
+
+# Ignore other common files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+*.pot
+*.mo
+*.swp
+*.swo
+.DS_Store
+*.sublime-workspace
+*.sublime-project
+.vscode

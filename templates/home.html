@@ -1,63 +1,187 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>ENSF 607 & 608 Project: Vacation Planner</title>
-    
+    <title>Vacation Planner</title>
     <meta charset="'utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="/static/style.css">
+    <!-- <link rel="stylesheet" href="/static/style.css"> -->
     <link rel="stylesheet" href="/static/custom.css">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
   </head>
 
   <body>
-    <div class="container">
-      <h1 class="title">{{title}}</h1>
-      <button id="toggleButton">Login</button>
+     <div>
+    {% if not Authenticated or not Registered %}
+	
+	<h1 class="title">Vacation Planner</h1>
+	
+	{% if errorMessage %}
+		<p id="error-message">{{errorMessage}}</p>
+	{% endif %}
 
-      <div class="Login">
-        <h2>Please login!</h2>
-        <p>This is a simple Flask demo application.</p>
-        <input type="password" id="passwordInput" placeholder="Enter password">
-        <p id="errorMessage" style="color: red; display: none;">Incorrect password!</p>
-      </div>
+	<div class="logFull">  	
+		<input type="checkbox" id="chk" aria-hidden="true">
 
-      <div class="Main" style="display: none;">
-        <div class="pic">   
-          <div class="row justify-content-center">
-            <div class="col-md-5 mb-2">
-              <img src="/static/sea.jpg" class="image1" id="banner">
-            </div>
-          </div>  
-        </div>
-        
+		<form class="login" action="/login" method="POST">
+			<label for="chk" aria-hidden="true">Login</label>
+			<input type="text" name="usernameLogin" placeholder="User name" required="">
+			<input type="password" name="passwordLogin" placeholder="Password" required="">			
+			<button id="loginbtn" name="loginpbtn">Login</button>
+			<p id="errorMessage" style="color: red;">{{ErrorMessageLogin}}</p>
+		</form>
+		
+		<form class="guest-form" action="/guest" method="POST">
+			<button id="guestbtn" name="guestbtn" class="guest-button">Continue as Guest</button>
+		</form>
+
+		<form class="signup" action="/SignUp" method="POST">
+			<label for="chk" aria-hidden="true">Sign up</label>
+			<input type="text" name="usernameSignUp" placeholder="User name" required="">
+			<input type="password" name="passwordSignUp" placeholder="Password" required="">			
+			<button id="signupbtn" name="signupbtn">Sign up</button>
+			<p id="errorMessage" style="color: red;">{{ErrorMessageSignUp}}</p>
+		</form>
+	</div>
+	
+ {% endif %}
+ 
+ {% if Authenticated %}
+	<h1 class="title">Tranquilo? We've got you covered.</h1>
+    <div class="Main">
+          <div class="pic">   
+            <div class="row justify-content-center">
+              <div class="col-md-5 mb-2">
+                <div class="banner-container">
+					<img src="/static/home-banner.jpg" class="banner-image" id="banner">
+				</div>
+              </div>
+            </div>  
+          </div>
         <div id="description">
-        <h2>Vacation Planner</h2>
-        <p>Please select the options that best fits your desired vacation</p>
+		  {% if session['user_name'] %}
+            <h2>Welcome to your Smart-cation Planner</h2>
+			<h2>{{ session['user_name'] }}</h2>
+          {% endif %}
+          <p>Please select the options that best fits your desired vacation</p>
         </div>
 
         <div class="tripGenerator">
           {% include 'tripGenerator.html' %}
-
         </div>
 
-        <div id="display">
-          <h2>Database Testing Area</h2>
-          <h2>Open Positions</h2>
-          <div>
-            {% for trip in trips%}
-            {% include 'tripitem.html' %}
-            {% endfor %}
-          </div>
-          
+        <!-- Add this new loading section -->
+        <div id="loadingAnimation" style="display: none;" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Generating your trip...</p>
+        </div>
+
+		<form class="displayUserQueries" action="/displayUserQueries" method="POST">
+			<button id="prvsettings" name="prvsettings" 
+					{% if session['guest_mode'] %}disabled{% endif %}>
+				Previous Settings
+			</button>
+		</form>
+		
+		<form class="displayUserVacation" action="/displayUserVacationPlans" method="POST">
+			<button id="prvResponses" name="prvResponses" 
+					{% if session['guest_mode'] %}disabled{% endif %}>
+				Previous Vacation Plans
+			</button>
+		</form>
+		
+		<form class="Logout" action="/Logout" method="POST">
+			<button id="logoutbtn" name="logoutbtn">Logout</button>
+		</form>
+
+		{% if vacation_plan %}
+		<div class="vacation-plan">
+			<h3>Your Personalized Vacation Plan</h3>
+			<a id="dwnloadpdf" name="dwnloadpdf" href="/download_pdf">Download as PDF</a>
+			<div class="plan-content">
+				{{ vacation_plan | safe }}
+			</div>
+		</div>
+		{% endif %}
+
+		{% if error %}
+		<div class="error-message">
+			{{ error }}
+		</div>
+		{% endif %}
+
+		{% if trips %}
+		<div id="displayQueries">
+			<h2>Here is a table of your previous settings:</h2>
+			<div class="trip">
+				<table>
+					<thead>
+						<tr>
+							<td>User Name</td>
+							<td>Begin Date</td>
+							<td>End Date</td>
+							<td>Departure City</td>
+							<td>Trip Theme</td>
+							<td>Location</td>
+							<td>Budget</td>
+							<td>Flying</td>
+							<td>Family Friendly</td>
+							<td>Disability Friendly</td>
+							<td>Group Discount</td>
+						</tr>
+					</thead>
+					<tbody>
+						{% for trip in trips %}
+						{% include 'tripitem.html' %}
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		{% endif %}
+		
+		{% if vacations %}
+		<div id="displayVacations">
+			<h2>Here is a table of your previous vacation plans:</h2>
+			<div class="vacation">
+				<table>
+					<thead>
+						<tr>
+							<th>chatGPT Prompt</th>
+							<th>Vacation Plan</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for vacation in vacations %}
+						{% include 'vacationitem.html' %}
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		{% endif %}
+		
         </div>
       </div>
+    {% endif %}
      
-
+    <div class="footer">  {% include 'footer.html' %} </div>
   </div>
   
-  {% include 'footer.html' %}
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+ 
+  <!-- <script src="{{ url_for('static', filename='script.js') }}"></script> -->
+  <!-- If there is an error in the signup, remain in the signup view. -->
+  	<script>
+    	document.addEventListener("DOMContentLoaded", function() {
+	        const errorMessageSignUp = "{{ ErrorMessageSignUp }}";
+        	if (errorMessageSignUp) {
+            	document.getElementById("chk").checked = true;
+        	}
+    	});
+	</script>
+
   </body>
 
 </html>
