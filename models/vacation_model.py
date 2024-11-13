@@ -12,11 +12,33 @@ if not api_key:
 GPT_CLIENT = OpenAI(api_key=api_key)
 
 class VacationModel:
+    """
+    Models vacation-related data operations.
+
+    This class interacts with the database to perform operations such as user
+    authentication, registration, trip planning, and storing/retrieving user queries
+    and responses.
+    """
     def __init__(self, db_operations: DatabaseOperations):
+        """
+        Initialize the VacationModel with a DatabaseOperations instance.
+
+        Args:
+            db_operations (DatabaseOperations): An instance to handle database operations.
+        """
         self.db_operations = db_operations
 
 
     def login(self, user_data):
+        """
+        Authenticate a user with the provided credentials.
+
+        Args:
+            user_data (dict): A dictionary containing 'username' and 'password'.
+
+        Returns:
+            dict: A dictionary with user ID and username if successful, or an error message.
+        """
         username = user_data.get("username")
         password = user_data.get("password")
 
@@ -46,6 +68,15 @@ class VacationModel:
 
 
     def register_user(self, user_data):
+        """
+        Register a new user with the provided data.
+
+        Args:
+            user_data (dict): A dictionary containing 'username' and 'password'.
+
+        Returns:
+            dict: A success message or an error message if registration fails.
+        """
         username = user_data['username']
         password = user_data['password']
 
@@ -90,6 +121,12 @@ class VacationModel:
 
 
     def store_trip_query(self, trip_details):
+        """
+        Store a trip query in the database.
+
+        Args:
+            trip_details (dict): A dictionary containing trip details.
+        """
         query = """
             CALL AddQueries(:userName, :beginDate, :endDate, :departureCity, 
                             :tripTheam, :location, :budget, :flying, :familyFriendly, 
@@ -99,6 +136,15 @@ class VacationModel:
 
 
     def generate_trip_itinerary(self, trip_details):
+        """
+        Generate a trip itinerary based on the provided details.
+
+        Args:
+            trip_details (dict): A dictionary containing trip details.
+
+        Returns:
+            str: A generated trip itinerary or an error message if generation fails.
+        """
         preferences = []
         if trip_details['flying']:
             preferences.append("no air travel")
@@ -143,6 +189,14 @@ class VacationModel:
             return "Error generating itinerary."
 
     def store_trip_response(self, user_name, prompt, response):
+        """
+        Store a trip response in the database.
+
+        Args:
+            user_name (str): The name of the user.
+            prompt (str): The prompt used to generate the response.
+            response (str): The generated response.
+        """
         query = "CALL AddResponse(:userName, :query, :response)"
         param = {
             'userName': user_name,
@@ -152,8 +206,26 @@ class VacationModel:
         self.db_operations.call_procedure(query, param)
 
     def fetch_user_queries(self, user_id):
+        """
+        Fetch previous trip queries for a user.
+
+        Args:
+            user_id (int): The ID of the user.
+
+        Returns:
+            list: A list of dictionaries containing user queries.
+        """
         return self.db_operations.load_queries_dicts_from_db(user_id)
 
 
     def fetch_user_vacation_plans(self, user_id):
+        """
+        Fetch previous vacation plans for a user.
+
+        Args:
+            user_id (int): The ID of the user.
+
+        Returns:
+            list: A list of dictionaries containing user vacation plans.
+        """
         return self.db_operations.load_response_dicts_from_db(user_id)

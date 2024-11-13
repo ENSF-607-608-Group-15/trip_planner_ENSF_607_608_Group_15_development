@@ -3,6 +3,9 @@ from sqlalchemy.exc import SQLAlchemyError
 import markdown
 
 class DatabaseOperations:
+    """
+    Represents the operations that can be performed on the database
+    """
     def __init__(self, engine):
         """
         Initialize the database operations using the engine

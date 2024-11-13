@@ -6,6 +6,11 @@ HOME_TITLE = 'Vacation Planner'
 
 @main_routes.route('/')
 def home():
+    """ Home Page
+
+    Returns:
+        Takes the user to Home Page
+    """
     return render_template('home.html', title=HOME_TITLE)
 
 
@@ -14,7 +19,7 @@ def login():
     """ Authenticate user login by verifying username and password
 
     Returns:
-    Takes the user to home page if login is successful, or displays error message if it fails
+        Takes the user to home page if login is successful, or displays error message if it fails
     """
     username = request.form.get('usernameLogin')
     password = request.form.get('passwordLogin')
@@ -41,7 +46,7 @@ def guest():
     """ Log in a guest user and set the session to guest mode
 
     Returns:
-    Takes the user to the home page with guest access
+        Takes the user to the home page with guest access
     """
     g.vacation_controller.set_guest_session()
     return render_template('home.html', Authenticated=True, Registered=True)
@@ -52,7 +57,7 @@ def Logout():
     """ Log out the current user
 
     Returns:
-    Takes the user back to the login page
+        Takes the user back to the login page
     """
     g.vacation_controller.logout()
     return render_template('home.html', Authenticated=False, Registered=True)
@@ -63,7 +68,7 @@ def SignUp():
     """ Register a new user by adding their info to the database
 
     Returns:
-    str: Take the user to the home page after successful signup
+        str: Take the user to the home page after successful signup
     """
     user_data = {
         'username': request.form.get('usernameSignUp'),
@@ -80,7 +85,7 @@ def generate_trip():
     """ Generate a vacation plan based on user input using LLM
 
     Returns:
-    Load home page with generated vacation plan, or an error message if failure
+        Load home page with generated vacation plan, or an error message if failure
     """
     trip_details = {
         'userName': session.get('user_name'),
@@ -108,7 +113,7 @@ def displayUserQueries():
     """ Retrieve and display users previous trip queries
 
     Returns:
-    Load home page with a table of previous trip settings
+        Load home page with a table of previous trip settings
     """
     user_id = session.get('user_id')
     trips = g.vacation_controller.get_user_queries(user_id)
@@ -120,7 +125,7 @@ def displayUserVacationPlans():
     """ Retrieve and display users previous vacation plans
 
     Returns:
-    Load page with a table of previous vacation plans
+        Load page with a table of previous vacation plans
     """
     user_id = session.get('user_id')
     vacations = g.vacation_controller.get_user_vacation_plans(user_id)
@@ -132,7 +137,7 @@ def download_pdf():
     """ Generate a PDF of the users vacation plan for downloading
 
     Returns:
-    File: A PDF file of the vacation plan
+        File: A PDF file of the vacation plan
     """
     pdf_data = g.vacation_controller.generate_pdf()
 

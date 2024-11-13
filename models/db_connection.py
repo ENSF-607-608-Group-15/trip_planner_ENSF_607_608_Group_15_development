@@ -3,6 +3,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 
 class DatabaseConnection:
+    """
+    Represents a connection to the database
+    """
     def __init__(self):
         """
         Initialize the database connection using environment variables
@@ -31,6 +34,12 @@ class DatabaseConnection:
             self.engine = None
 
     def get_engine(self):
+        """
+        Retrieve the database engine.
+
+        Returns:
+            Engine: The SQLAlchemy engine instance if available; otherwise, None.
+        """
         if self.engine is None:
             print("Engine not available. Check database connection.")
         return self.engine
