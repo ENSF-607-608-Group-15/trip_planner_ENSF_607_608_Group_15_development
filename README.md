@@ -3,8 +3,9 @@ A practice project of building a travel planning website using Python Flask and 
 Instructions to run the project:
 1. Clone the repository.
 2. Install the requirements found in `requirements.txt` in your virtual environment.
-3. Run `python app.py` on the project directory.
-4. Visit `http://localhost:3000/` to see the project running. Alternatively, open the URL of the deployed project.
+3. Add the `.env` to the project location.
+4. Run `python app.py` on the project directory.
+5. Visit `http://localhost:3000/` to see the project running. Alternatively, open the URL of the deployed project.
 
 Instructions to use the website:
 1. Sign up as a new user and log in OR log in as existing user (username = "abc", password = "123") OR continue as Guest.
